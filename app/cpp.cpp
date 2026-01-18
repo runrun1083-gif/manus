@@ -148,232 +148,8 @@
 #include IMGUI_STB_TRUETYPE_FILENAME
 
 // --- 2. GLOBAL MACROS & CONFIG ---
-#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
-#define IMGUI_IMPL_API extern "C"
-// 衝突を避けるためのマクロ再定義など
 
 // --- 3. FORWARD DECLARATIONS ---
-// 「材料」の一覧。下部で定義されていても、ここで宣言することでエラーを防ぐ
-class ImVector;
-enum ImDrawFlags_;
-enum ImDrawListFlags_;
-enum ImDrawTextFlags_;
-enum ImFontAtlasFlags_;
-enum ImFontFlags_;
-enum ImGuiActivateFlags_;
-enum ImGuiAxis;
-enum ImGuiBackendFlags_;
-enum ImGuiButtonFlagsPrivate_;
-enum ImGuiButtonFlags_;
-enum ImGuiChildFlags_;
-enum ImGuiCol_;
-enum ImGuiColorEditFlags_;
-enum ImGuiComboFlagsPrivate_;
-enum ImGuiComboFlags_;
-enum ImGuiCond_;
-enum ImGuiConfigFlags_;
-enum ImGuiContextHookType;
-enum ImGuiDataTypePrivate_;
-enum ImGuiDataType_;
-enum ImGuiDebugLogFlags_;
-enum ImGuiDir;
-enum ImGuiDragDropFlags_;
-enum ImGuiFocusRequestFlags_;
-enum ImGuiFocusedFlags_;
-enum ImGuiFreeTypeLoaderFlags_;
-enum ImGuiHoveredFlagsPrivate_;
-enum ImGuiHoveredFlags_;
-enum ImGuiInputEventType;
-enum ImGuiInputFlagsPrivate_;
-enum ImGuiInputFlags_;
-enum ImGuiInputSource;
-enum ImGuiInputTextFlagsPrivate_;
-enum ImGuiInputTextFlags_;
-enum ImGuiItemFlagsPrivate_;
-enum ImGuiItemFlags_;
-enum ImGuiItemStatusFlags_;
-enum ImGuiKey;
-enum ImGuiLayoutType_;
-enum ImGuiListClipperFlags_;
-enum ImGuiLocKey;
-enum ImGuiLogFlags_;
-enum ImGuiMouseButton_;
-enum ImGuiMouseCursor_;
-enum ImGuiMouseSource;
-enum ImGuiMultiSelectFlags_;
-enum ImGuiNavLayer;
-enum ImGuiNavMoveFlags_;
-enum ImGuiNavRenderCursorFlags_;
-enum ImGuiNextItemDataFlags_;
-enum ImGuiNextWindowDataFlags_;
-enum ImGuiOldColumnFlags_;
-enum ImGuiPlotType;
-enum ImGuiPopupFlags_;
-enum ImGuiPopupPositionPolicy;
-enum ImGuiScrollFlags_;
-enum ImGuiSelectableFlagsPrivate_;
-enum ImGuiSelectableFlags_;
-enum ImGuiSelectionRequestType;
-enum ImGuiSeparatorFlags_;
-enum ImGuiSliderFlagsPrivate_;
-enum ImGuiSliderFlags_;
-enum ImGuiSortDirection;
-enum ImGuiStyleVar_;
-enum ImGuiTabBarFlagsPrivate_;
-enum ImGuiTabBarFlags_;
-enum ImGuiTabItemFlagsPrivate_;
-enum ImGuiTabItemFlags_;
-enum ImGuiTableBgTarget_;
-enum ImGuiTableColumnFlags_;
-enum ImGuiTableFlags_;
-enum ImGuiTableRowFlags_;
-enum ImGuiTextFlags_;
-enum ImGuiTooltipFlags_;
-enum ImGuiTreeNodeFlagsPrivate_;
-enum ImGuiTreeNodeFlags_;
-enum ImGuiTypingSelectFlags_;
-enum ImGuiViewportFlags_;
-enum ImGuiWindowBgClickFlags_;
-enum ImGuiWindowFlags_;
-enum ImGuiWindowRefreshFlags_;
-enum ImGui_ImplSDL2_GamepadMode;
-enum ImGui_ImplSDL3_GamepadMode;
-enum ImTextureFormat;
-enum ImTextureStatus;
-enum ImWcharClass;
-enum uSynergyClipboardFormat;
-struct ImBitArray;
-struct ImChunkStream;
-struct ImColor;
-struct ImDrawChannel;
-struct ImDrawCmd;
-struct ImDrawCmdHeader;
-struct ImDrawData;
-struct ImDrawDataBuilder;
-struct ImDrawList;
-struct ImDrawListSplitter;
-struct ImDrawVert;
-struct ImFont;
-struct ImFontAtlas;
-struct ImFontAtlasBuilder;
-struct ImFontAtlasPostProcessData;
-struct ImFontAtlasRect;
-struct ImFontAtlasRectEntry;
-struct ImFontBaked;
-struct ImFontConfig;
-struct ImFontGlyph;
-struct ImFontGlyphRangesBuilder;
-struct ImFontLoader;
-struct ImFontStackData;
-struct ImGuiBoxSelectState;
-struct ImGuiColorMod;
-struct ImGuiContext;
-struct ImGuiContextHook;
-struct ImGuiDataTypeInfo;
-struct ImGuiDataTypeStorage;
-struct ImGuiDeactivatedItemData;
-struct ImGuiDebugAllocEntry;
-struct ImGuiDebugAllocInfo;
-struct ImGuiDebugItemPathQuery;
-struct ImGuiFocusScopeData;
-struct ImGuiIDStackTool;
-struct ImGuiIO;
-struct ImGuiInputEvent;
-struct ImGuiInputEventAppFocused;
-struct ImGuiInputEventKey;
-struct ImGuiInputEventMouseButton;
-struct ImGuiInputEventMousePos;
-struct ImGuiInputEventMouseWheel;
-struct ImGuiInputEventText;
-struct ImGuiInputTextCallbackData;
-struct ImGuiKeyData;
-struct ImGuiKeyOwnerData;
-struct ImGuiKeyRoutingData;
-struct ImGuiKeyRoutingTable;
-struct ImGuiLastItemData;
-struct ImGuiListClipper;
-struct ImGuiListClipperData;
-struct ImGuiListClipperRange;
-struct ImGuiLocEntry;
-struct ImGuiMetricsConfig;
-struct ImGuiMultiSelectIO;
-struct ImGuiNavItemData;
-struct ImGuiNextItemData;
-struct ImGuiNextWindowData;
-struct ImGuiOldColumnData;
-struct ImGuiOldColumns;
-struct ImGuiOnceUponAFrame;
-struct ImGuiPayload;
-struct ImGuiPlatformIO;
-struct ImGuiPlatformImeData;
-struct ImGuiPopupData;
-struct ImGuiPtrOrIndex;
-struct ImGuiSelectionBasicStorage;
-struct ImGuiSelectionExternalStorage;
-struct ImGuiSelectionRequest;
-struct ImGuiSettingsHandler;
-struct ImGuiShrinkWidthItem;
-struct ImGuiSizeCallbackData;
-struct ImGuiStackLevelInfo;
-struct ImGuiStorage;
-struct ImGuiStoragePair;
-struct ImGuiStyle;
-struct ImGuiStyleMod;
-struct ImGuiStyleVarInfo;
-struct ImGuiTabItem;
-struct ImGuiTableCellData;
-struct ImGuiTableColumn;
-struct ImGuiTableColumnSettings;
-struct ImGuiTableColumnSortSpecs;
-struct ImGuiTableHeaderData;
-struct ImGuiTableInstanceData;
-struct ImGuiTableSettings;
-struct ImGuiTableSortSpecs;
-struct ImGuiTextBuffer;
-struct ImGuiTextFilter;
-struct ImGuiTextIndex;
-struct ImGuiTextRange;
-struct ImGuiTreeNodeStackData;
-struct ImGuiViewport;
-struct ImGuiWindow;
-struct ImGuiWindowSettings;
-struct ImGuiWindowStackData;
-struct ImGui_ImplDX10_RenderState;
-struct ImGui_ImplDX11_RenderState;
-struct ImGui_ImplDX12_InitInfo;
-struct ImGui_ImplDX12_RenderState;
-struct ImGui_ImplSDLGPU3_InitInfo;
-struct ImGui_ImplSDLGPU3_RenderState;
-struct ImGui_ImplSDLRenderer2_RenderState;
-struct ImGui_ImplSDLRenderer3_RenderState;
-struct ImGui_ImplVulkanH_Frame;
-struct ImGui_ImplVulkanH_FrameSemaphores;
-struct ImGui_ImplVulkanH_Window;
-struct ImGui_ImplVulkan_InitInfo;
-struct ImGui_ImplVulkan_PipelineInfo;
-struct ImGui_ImplVulkan_RenderState;
-struct ImGui_ImplWGPU_CreateSurfaceInfo;
-struct ImGui_ImplWGPU_InitInfo;
-struct ImGui_ImplWGPU_RenderState;
-struct ImNewWrapper;
-struct ImPool;
-struct ImSpan;
-struct ImSpanAllocator;
-struct ImStableVector;
-struct ImTextureData;
-struct ImTextureRect;
-struct ImTextureRef;
-struct ImVec1;
-struct ImVec2;
-struct ImVec2i;
-struct ImVec2ih;
-struct ImVec4;
-struct stbrp_context;
-struct stbrp_context_opaque;
-struct stbrp_node;
-struct stbrp_rect;
-struct stbtt_fontinfo;
-struct stbtt_pack_context;
 
 // --- 4. FUNCTION PROTOTYPES (The "Recipe" List) ---
 // 「処理」の目次。全ての実装セクションからシグネチャをコピー
@@ -422,6 +198,7 @@ namespace ImGui {
 */
 
 // === [SECTION: imgui.cpp] ===
+
 // dear imgui, v1.92.6 WIP
 // (main code and documentation)
 
@@ -1608,11 +1385,9 @@ IMPLEMENTING SUPPORT for ImGuiBackendFlags_RendererHasTextures:
 //-------------------------------------------------------------------------
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
-#define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
-#define IMGUI_DEFINE_MATH_OPERATORS
 #endif
 
 #ifndef IMGUI_DISABLE
@@ -1621,28 +1396,21 @@ IMPLEMENTING SUPPORT for ImGuiBackendFlags_RendererHasTextures:
 
 // [Windows] On non-Visual Studio compilers, we default to IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS unless explicitly enabled
 #if defined(_WIN32) && !defined(_MSC_VER) && !defined(IMGUI_ENABLE_WIN32_DEFAULT_IME_FUNCTIONS) && !defined(IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS)
-#define IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS
 #endif
 
 // [Windows] OS specific includes (optional)
 #if defined(_WIN32) && defined(IMGUI_DISABLE_DEFAULT_FILE_FUNCTIONS) && defined(IMGUI_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCTIONS) && defined(IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS) && defined(IMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
-#define IMGUI_DISABLE_WIN32_FUNCTIONS
 #endif
 #if defined(_WIN32) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
 #ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
 #endif
 #ifndef NOMINMAX
-#define NOMINMAX
 #endif
 #ifndef __MINGW32__
 #else
 #endif
 #if defined(WINAPI_FAMILY) && ((defined(WINAPI_FAMILY_APP) && WINAPI_FAMILY == WINAPI_FAMILY_APP) || (defined(WINAPI_FAMILY_GAMES) && WINAPI_FAMILY == WINAPI_FAMILY_GAMES))
 // The UWP and GDK Win32 API subsets don't support clipboard nor IME functions
-#define IMGUI_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCTIONS
-#define IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS
-#define IMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS
 #endif
 #endif
 
@@ -1699,8 +1467,6 @@ IMPLEMENTING SUPPORT for ImGuiBackendFlags_RendererHasTextures:
 #endif
 
 // Debug options
-#define IMGUI_DEBUG_NAV_SCORING     0   // Display navigation scoring preview when hovering items. Hold Ctrl to display for all candidates. Ctrl+Arrow to change last direction.
-#define IMGUI_DEBUG_NAV_RECTS       0   // Display the reference navigation rectangle for each window
 
 // Default font size if unspecified in both style.FontSizeBase and AddFontXXX() calls.
 static const float FONT_DEFAULT_SIZE_BASE = 20.0f;
@@ -2654,7 +2420,6 @@ const char* ImStrSkipBlank(const char* str)
 // designed using two-passes worst case, which probably could be improved using the stbsp_vsprintfcb() function.)
 #ifdef IMGUI_USE_STB_SPRINTF
 #ifndef IMGUI_DISABLE_STB_SPRINTF_IMPLEMENTATION
-#define STB_SPRINTF_IMPLEMENTATION
 #endif
 #ifdef IMGUI_STB_SPRINTF_FILENAME
 #else
@@ -2662,7 +2427,6 @@ const char* ImStrSkipBlank(const char* str)
 #endif // #ifdef IMGUI_USE_STB_SPRINTF
 
 #if defined(_MSC_VER) && !defined(vsnprintf)
-#define vsnprintf _vsnprintf
 #endif
 
 int ImFormatString(char* buf, size_t buf_size, const char* fmt, ...)
@@ -3502,9 +3266,7 @@ bool ImGuiTextFilter::PassFilter(const char* text, const char* text_end) const
 // va_copy is the 'correct' way to copy a va_list but Visual Studio prior to 2013 doesn't have it.
 #ifndef va_copy
 #if defined(__GNUC__) || defined(__clang__)
-#define va_copy(dest, src) __builtin_va_copy(dest, src)
 #else
-#define va_copy(dest, src) (dest = src)
 #endif
 #endif
 
@@ -16308,13 +16070,10 @@ static void Platform_SetClipboardTextFn_DefaultImpl(ImGuiContext* ctx, const cha
 
 #ifndef IMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS
 #if defined(__APPLE__) && TARGET_OS_IPHONE
-#define IMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS
 #endif
 #if defined(__3DS__)
-#define IMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS
 #endif
 #if defined(_WIN32) && defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
-#define IMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS
 #endif
 #endif // #ifndef IMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS
 
@@ -18604,6 +18363,7 @@ void ImGui::ShowFontSelector(const char* label)
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: imgui_demo.cpp] ===
+
 // dear imgui, v1.92.6 WIP
 // (demo code)
 
@@ -18730,7 +18490,6 @@ Index of this file:
 */
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
-#define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #ifndef IMGUI_DISABLE
@@ -18782,43 +18541,30 @@ Index of this file:
 
 // Play it nice with Windows users (Update: May 2018, Notepad now supports Unix-style carriage returns!)
 #ifdef _WIN32
-#define IM_NEWLINE  "\r\n"
 #else
-#define IM_NEWLINE  "\n"
 #endif
 
 // Helpers
 #if defined(_MSC_VER) && !defined(snprintf)
-#define snprintf    _snprintf
 #endif
 #if defined(_MSC_VER) && !defined(vsnprintf)
-#define vsnprintf   _vsnprintf
 #endif
 
 // Format specifiers for 64-bit values (hasn't been decently standardized before VS2013)
 #if !defined(PRId64) && defined(_MSC_VER)
-#define PRId64 "I64d"
-#define PRIu64 "I64u"
 #elif !defined(PRId64)
-#define PRId64 "lld"
-#define PRIu64 "llu"
 #endif
 
 // Helpers macros
 // We normally try to not use many helpers in imgui_demo.cpp in order to make code easier to copy and paste,
 // but making an exception here as those are largely simplifying code...
 // In other imgui sources we can use nicer internal functions from imgui_internal.h (ImMin/ImMax) but not in the demo.
-#define IM_MIN(A, B)            (((A) < (B)) ? (A) : (B))
-#define IM_MAX(A, B)            (((A) >= (B)) ? (A) : (B))
-#define IM_CLAMP(V, MN, MX)     ((V) < (MN) ? (MN) : (V) > (MX) ? (MX) : (V))
 
 // Enforce cdecl calling convention for functions called by the standard library,
 // in case compilation settings changed the default to e.g. __vectorcall
 #ifndef IMGUI_CDECL
 #ifdef _MSC_VER
-#define IMGUI_CDECL __cdecl
 #else
-#define IMGUI_CDECL
 #endif
 #endif
 
@@ -18885,7 +18631,6 @@ extern ImGuiDemoMarkerCallback      GImGuiDemoMarkerCallback;
 extern void*                        GImGuiDemoMarkerCallbackUserData;
 ImGuiDemoMarkerCallback             GImGuiDemoMarkerCallback = NULL;
 void*                               GImGuiDemoMarkerCallbackUserData = NULL;
-#define IMGUI_DEMO_MARKER(section)  do { if (GImGuiDemoMarkerCallback != NULL) GImGuiDemoMarkerCallback("imgui_demo.cpp", __LINE__, section, GImGuiDemoMarkerCallbackUserData); } while (0)
 
 //-----------------------------------------------------------------------------
 // [SECTION] Demo Window / ShowDemoWindow()
@@ -29503,6 +29248,7 @@ bool ImGui::ShowStyleSelector(const char*) { return false; }
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: imgui_draw.cpp] ===
+
 // dear imgui, v1.92.6 WIP
 // (drawing and font code)
 
@@ -29531,11 +29277,9 @@ Index of this file:
 */
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
-#define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
-#define IMGUI_DEFINE_MATH_OPERATORS
 #endif
 
 #ifndef IMGUI_DISABLE
@@ -29623,10 +29367,6 @@ namespace IMGUI_STB_NAMESPACE
 
 #ifndef STB_RECT_PACK_IMPLEMENTATION                        // in case the user already have an implementation in the _same_ compilation unit (e.g. unity builds)
 #ifndef IMGUI_DISABLE_STB_RECT_PACK_IMPLEMENTATION          // in case the user already have an implementation in another compilation unit
-#define STBRP_STATIC
-#define STBRP_ASSERT(x)     do { IM_ASSERT(x); } while (0)
-#define STBRP_SORT          ImQsort
-#define STB_RECT_PACK_IMPLEMENTATION
 #endif
 #ifdef IMGUI_STB_RECT_PACK_FILENAME
 #else
@@ -29636,20 +29376,7 @@ namespace IMGUI_STB_NAMESPACE
 #ifdef  IMGUI_ENABLE_STB_TRUETYPE
 #ifndef STB_TRUETYPE_IMPLEMENTATION                         // in case the user already have an implementation in the _same_ compilation unit (e.g. unity builds)
 #ifndef IMGUI_DISABLE_STB_TRUETYPE_IMPLEMENTATION           // in case the user already have an implementation in another compilation unit
-#define STBTT_malloc(x,u)   ((void)(u), IM_ALLOC(x))
-#define STBTT_free(x,u)     ((void)(u), IM_FREE(x))
-#define STBTT_assert(x)     do { IM_ASSERT(x); } while(0)
-#define STBTT_fmod(x,y)     ImFmod(x,y)
-#define STBTT_sqrt(x)       ImSqrt(x)
-#define STBTT_pow(x,y)      ImPow(x,y)
-#define STBTT_fabs(x)       ImFabs(x)
-#define STBTT_ifloor(x)     ((int)ImFloor(x))
-#define STBTT_iceil(x)      ((int)ImCeil(x))
-#define STBTT_strlen(x)     ImStrlen(x)
-#define STBTT_STATIC
-#define STB_TRUETYPE_IMPLEMENTATION
 #else
-#define STBTT_DEF extern
 #endif
 #ifdef IMGUI_STB_TRUETYPE_FILENAME
 #else
@@ -30056,10 +29783,6 @@ void ImDrawList::AddCallback(ImDrawCallback callback, void* userdata, size_t use
 }
 
 // Compare ClipRect, TexRef and VtxOffset with a single memcmp()
-#define ImDrawCmd_HeaderSize                            (offsetof(ImDrawCmd, VtxOffset) + sizeof(unsigned int))
-#define ImDrawCmd_HeaderCompare(CMD_LHS, CMD_RHS)       (memcmp(CMD_LHS, CMD_RHS, ImDrawCmd_HeaderSize))    // Compare ClipRect, TexRef, VtxOffset
-#define ImDrawCmd_HeaderCopy(CMD_DST, CMD_SRC)          (memcpy(CMD_DST, CMD_SRC, ImDrawCmd_HeaderSize))    // Copy ClipRect, TexRef, VtxOffset
-#define ImDrawCmd_AreSequentialIdxOffset(CMD_0, CMD_1)  (CMD_0->IdxOffset + CMD_0->ElemCount == CMD_1->IdxOffset)
 
 // Try to merge two last draw commands
 void ImDrawList::_TryMergeDrawCmds()
@@ -30294,9 +30017,6 @@ void ImDrawList::PrimQuadUV(const ImVec2& a, const ImVec2& b, const ImVec2& c, c
 // On AddPolyline() and AddConvexPolyFilled() we intentionally avoid using ImVec2 and superfluous function calls to optimize debug/non-inlined builds.
 // - Those macros expects l-values and need to be used as their own statement.
 // - Those macros are intentionally not surrounded by the 'do {} while (0)' idiom because even that translates to runtime with debug compilers.
-#define IM_NORMALIZE2F_OVER_ZERO(VX,VY)     { float d2 = VX*VX + VY*VY; if (d2 > 0.0f) { float inv_len = ImRsqrt(d2); VX *= inv_len; VY *= inv_len; } } (void)0
-#define IM_FIXNORMAL2F_MAX_INVLEN2          100.0f // 500.0f (see #4053, #3366)
-#define IM_FIXNORMAL2F(VX,VY)               { float d2 = VX*VX + VY*VY; if (d2 > 0.000001f) { float inv_len2 = 1.0f / d2; if (inv_len2 > IM_FIXNORMAL2F_MAX_INVLEN2) inv_len2 = IM_FIXNORMAL2F_MAX_INVLEN2; VX *= inv_len2; VY *= inv_len2; } } (void)0
 
 // TODO: Thickness anti-aliased lines cap are missing their AA fringe.
 // We avoid using the ImVec2 math operators here to reduce cost to a minimum for debug/non-inlined builds.
@@ -32130,9 +31850,6 @@ static const ImVec2 FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[ImGuiMouseCursor_COUNT][3
     { ImVec2(109,0),ImVec2(13,15), ImVec2( 6, 7) }, // ImGuiMouseCursor_NotAllowed
 };
 
-#define IM_FONTGLYPH_INDEX_UNUSED           ((ImU16)-1) // 0xFFFF
-#define IM_FONTGLYPH_INDEX_NOT_FOUND        ((ImU16)-2) // 0xFFFE
-
 ImFontAtlas::ImFontAtlas()
 {
     memset(this, 0, sizeof(*this));
@@ -33548,7 +33265,6 @@ ImTextureData* ImFontAtlasTextureAdd(ImFontAtlas* atlas, int w, int h)
 }
 
 #if 0
-#define STB_IMAGE_WRITE_IMPLEMENTATION
 static void ImFontAtlasDebugWriteTexToDisk(ImTextureData* tex, const char* description)
 {
     ImGuiContext& g = *GImGui;
@@ -34946,8 +34662,6 @@ void ImTextClassifierSetCharClassFromStr(ImU32* bits, unsigned int codepoint_min
     }
 }
 
-#define ImTextClassifierGet(_BITS, _CHAR_OFFSET)    ((_BITS[(_CHAR_OFFSET) >> 4] >> (((_CHAR_OFFSET) & 15) << 1)) & 0x03)
-
 // 2-bit per character
 static ImU32 g_CharClassifierIsSeparator_0000_007f[128 / 16] = {};
 static ImU32 g_CharClassifierIsSeparator_3000_300f[ 16 / 16] = {};
@@ -35677,10 +35391,6 @@ static void stb__lit(const unsigned char *data, unsigned int length)
     stb__dout += length;
 }
 
-#define stb__in2(x)   ((i[x] << 8) + i[(x)+1])
-#define stb__in3(x)   ((i[x] << 16) + stb__in2((x)+1))
-#define stb__in4(x)   ((i[x] << 24) + stb__in3((x)+1))
-
 static const unsigned char *stb_decompress_token(const unsigned char *i)
 {
     if (*i >= 0x20) { // use fewer if's for cases that expand small
@@ -36285,6 +35995,7 @@ static const char* GetDefaultCompressedFontDataProggyVector(int* out_size)
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: imgui_tables.cpp] ===
+
 // dear imgui, v1.92.6 WIP
 // (tables and columns code)
 
@@ -36475,11 +36186,9 @@ Index of this file:
 //-----------------------------------------------------------------------------
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
-#define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
-#define IMGUI_DEFINE_MATH_OPERATORS
 #endif
 
 #ifndef IMGUI_DISABLE
@@ -40884,6 +40593,7 @@ void ImGui::Columns(int columns_count, const char* id, bool borders)
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: imgui_widgets.cpp] ===
+
 // dear imgui, v1.92.6 WIP
 // (widgets code)
 
@@ -40919,11 +40629,9 @@ Index of this file:
 */
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
-#define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
-#define IMGUI_DEFINE_MATH_OPERATORS
 #endif
 
 #ifndef IMGUI_DISABLE
@@ -44895,9 +44603,6 @@ static void    STB_TEXTEDIT_LAYOUTROW(StbTexteditRow* r, ImGuiInputTextState* ob
     r->num_chars = (int)(text_remaining - (text + line_start_idx));
 }
 
-#define IMSTB_TEXTEDIT_GETNEXTCHARINDEX  IMSTB_TEXTEDIT_GETNEXTCHARINDEX_IMPL
-#define IMSTB_TEXTEDIT_GETPREVCHARINDEX  IMSTB_TEXTEDIT_GETPREVCHARINDEX_IMPL
-
 static int IMSTB_TEXTEDIT_GETNEXTCHARINDEX_IMPL(ImGuiInputTextState* obj, int idx)
 {
     if (idx >= obj->TextLen)
@@ -44985,8 +44690,6 @@ static int  STB_TEXTEDIT_MOVEWORDRIGHT_WIN(ImGuiInputTextState* obj, int idx)
     return idx > len ? len : idx;
 }
 static int  STB_TEXTEDIT_MOVEWORDRIGHT_IMPL(ImGuiInputTextState* obj, int idx)  { ImGuiContext& g = *obj->Ctx; if (g.IO.ConfigMacOSXBehaviors) return STB_TEXTEDIT_MOVEWORDRIGHT_MAC(obj, idx); else return STB_TEXTEDIT_MOVEWORDRIGHT_WIN(obj, idx); }
-#define STB_TEXTEDIT_MOVEWORDLEFT       STB_TEXTEDIT_MOVEWORDLEFT_IMPL  // They need to be #define for stb_textedit.h
-#define STB_TEXTEDIT_MOVEWORDRIGHT      STB_TEXTEDIT_MOVEWORDRIGHT_IMPL
 
 // Reimplementation of stb_textedit_move_line_start()/stb_textedit_move_line_end() which supports word-wrapping.
 static int STB_TEXTEDIT_MOVELINESTART_IMPL(ImGuiInputTextState* obj, ImStb::STB_TexteditState* state, int cursor)
@@ -45054,9 +44757,6 @@ static int STB_TEXTEDIT_MOVELINEEND_IMPL(ImGuiInputTextState* obj, ImStb::STB_Te
     return cursor;
 }
 
-#define STB_TEXTEDIT_MOVELINESTART      STB_TEXTEDIT_MOVELINESTART_IMPL
-#define STB_TEXTEDIT_MOVELINEEND        STB_TEXTEDIT_MOVELINEEND_IMPL
-
 static void STB_TEXTEDIT_DELETECHARS(ImGuiInputTextState* obj, int pos, int n)
 {
     // Offset remaining text (+ copy zero terminator)
@@ -45102,26 +44802,6 @@ static int STB_TEXTEDIT_INSERTCHARS(ImGuiInputTextState* obj, int pos, const cha
 }
 
 // We don't use an enum so we can build even with conflicting symbols (if another user of stb_textedit.h leak their STB_TEXTEDIT_K_* symbols)
-#define STB_TEXTEDIT_K_LEFT         0x200000 // keyboard input to move cursor left
-#define STB_TEXTEDIT_K_RIGHT        0x200001 // keyboard input to move cursor right
-#define STB_TEXTEDIT_K_UP           0x200002 // keyboard input to move cursor up
-#define STB_TEXTEDIT_K_DOWN         0x200003 // keyboard input to move cursor down
-#define STB_TEXTEDIT_K_LINESTART    0x200004 // keyboard input to move cursor to start of line
-#define STB_TEXTEDIT_K_LINEEND      0x200005 // keyboard input to move cursor to end of line
-#define STB_TEXTEDIT_K_TEXTSTART    0x200006 // keyboard input to move cursor to start of text
-#define STB_TEXTEDIT_K_TEXTEND      0x200007 // keyboard input to move cursor to end of text
-#define STB_TEXTEDIT_K_DELETE       0x200008 // keyboard input to delete selection or character under cursor
-#define STB_TEXTEDIT_K_BACKSPACE    0x200009 // keyboard input to delete selection or character left of cursor
-#define STB_TEXTEDIT_K_UNDO         0x20000A // keyboard input to perform undo
-#define STB_TEXTEDIT_K_REDO         0x20000B // keyboard input to perform redo
-#define STB_TEXTEDIT_K_WORDLEFT     0x20000C // keyboard input to move cursor left one word
-#define STB_TEXTEDIT_K_WORDRIGHT    0x20000D // keyboard input to move cursor right one word
-#define STB_TEXTEDIT_K_PGUP         0x20000E // keyboard input to move cursor up a page
-#define STB_TEXTEDIT_K_PGDOWN       0x20000F // keyboard input to move cursor down a page
-#define STB_TEXTEDIT_K_SHIFT        0x400000
-
-#define IMSTB_TEXTEDIT_IMPLEMENTATION
-#define IMSTB_TEXTEDIT_memmove memmove
 
 // stb_textedit internally allows for a single undo record to do addition and deletion, but somehow, calling
 // the stb_textedit_paste() function creates two separate records, so we perform it manually. (FIXME: Report to nothings/stb?)
@@ -51721,6 +51401,7 @@ void ImGui::TabItemLabelAndCloseButton(ImDrawList* draw_list, const ImRect& bb, 
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_allegro5.cpp] ===
+
 // dear imgui: Renderer + Platform Backend for Allegro 5
 // (Info: Allegro 5 is a cross-platform general purpose library for handling windows, inputs, graphics, etc.)
 
@@ -51789,8 +51470,6 @@ void ImGui::TabItemLabelAndCloseButton(ImDrawList* draw_list, const ImRect& bb, 
 // Allegro
 #ifdef _WIN32
 #endif
-#define ALLEGRO_HAS_CLIPBOARD           ((ALLEGRO_VERSION_INT & ~ALLEGRO_UNSTABLE_BIT) >= ((5 << 24) | (1 << 16) | (12 << 8))) // Clipboard only supported from Allegro 5.1.12
-#define ALLEGRO_HAS_DRAW_INDEXED_PRIM   ((ALLEGRO_VERSION_INT & ~ALLEGRO_UNSTABLE_BIT) >= ((5 << 24) | (2 << 16) | ( 5 << 8))) // DX9 implementation of al_draw_indexed_prim() got fixed in Allegro 5.2.5
 
 // Visual Studio warnings
 #ifdef _MSC_VER
@@ -51808,7 +51487,6 @@ struct ImDrawVertAllegro
 // FIXME-OPT: Consider inlining al_map_rgba()?
 // see https://github.com/liballeg/allegro5/blob/master/src/pixels.c#L554
 // and https://github.com/liballeg/allegro5/blob/master/include/allegro5/internal/aintern_pixels.h
-#define DRAW_VERT_IMGUI_TO_ALLEGRO(DST, SRC)  { (DST)->pos = (SRC)->pos; (DST)->uv = (SRC)->uv; unsigned char* c = (unsigned char*)&(SRC)->col; (DST)->col = al_map_rgba(c[0], c[1], c[2], c[3]); }
 
 // Allegro Data
 struct ImGui_ImplAllegro5_Data
@@ -52414,6 +52092,7 @@ void ImGui_ImplAllegro5_NewFrame()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_android.cpp] ===
+
 // dear imgui: Platform Binding for Android native app
 // This needs to be used along with the OpenGL 3 Renderer (imgui_impl_opengl3)
 
@@ -52717,6 +52396,7 @@ void ImGui_ImplAndroid_NewFrame()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_dx10.cpp] ===
+
 // dear imgui: Renderer Backend for DirectX10
 // This needs to be used along with a Platform Backend (e.g. Win32)
 
@@ -53372,6 +53052,7 @@ void ImGui_ImplDX10_NewFrame()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_dx11.cpp] ===
+
 // dear imgui: Renderer Backend for DirectX11
 // This needs to be used along with a Platform Backend (e.g. Win32)
 
@@ -54048,6 +53729,7 @@ void ImGui_ImplDX11_NewFrame()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_dx12.cpp] ===
+
 // dear imgui: Renderer Backend for DirectX12
 // This needs to be used along with a Platform Backend (e.g. Win32)
 
@@ -55016,6 +54698,7 @@ void ImGui_ImplDX12_NewFrame()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_dx9.cpp] ===
+
 // dear imgui: Renderer Backend for DirectX9
 // This needs to be used along with a Platform Backend (e.g. Win32)
 
@@ -55087,12 +54770,9 @@ struct CUSTOMVERTEX
     D3DCOLOR col;
     float    uv[2];
 };
-#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 
 #ifdef IMGUI_USE_BGRA_PACKED_COLOR
-#define IMGUI_COL_TO_DX9_ARGB(_COL)     (_COL)
 #else
-#define IMGUI_COL_TO_DX9_ARGB(_COL)     (((_COL) & 0xFF00FF00) | (((_COL) & 0xFF0000) >> 16) | (((_COL) & 0xFF) << 16))
 #endif
 
 // Backend data stored in io.BackendRendererUserData to allow support for multiple Dear ImGui contexts
@@ -55495,6 +55175,7 @@ void ImGui_ImplDX9_NewFrame()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_glfw.cpp] ===
+
 // dear imgui: Platform Backend for GLFW
 // This needs to be used along with a Renderer (e.g. OpenGL3, Vulkan, WebGPU..)
 // (Info: GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan graphics context creation, etc.)
@@ -55606,27 +55287,20 @@ void ImGui_ImplDX9_NewFrame()
 
 // GLFW
 #if !defined(IMGUI_IMPL_GLFW_DISABLE_X11) && (defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__))
-#define GLFW_HAS_X11        1
 #else
-#define GLFW_HAS_X11        0
 #endif
 #if !defined(IMGUI_IMPL_GLFW_DISABLE_WAYLAND) && (defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__))
-#define GLFW_HAS_WAYLAND    1
 #else
-#define GLFW_HAS_WAYLAND    0
 #endif
 #ifdef _WIN32
 #undef APIENTRY
 #ifndef GLFW_EXPOSE_NATIVE_WIN32    // for glfwGetWin32Window()
-#define GLFW_EXPOSE_NATIVE_WIN32
 #endif
 #elif defined(__APPLE__)
 #ifndef GLFW_EXPOSE_NATIVE_COCOA    // for glfwGetCocoaWindow()
-#define GLFW_EXPOSE_NATIVE_COCOA
 #endif
 #elif GLFW_HAS_X11
 #ifndef GLFW_EXPOSE_NATIVE_X11      // for glfwGetX11Display(), glfwGetX11Window() on Freedesktop (Linux, BSD, etc.)
-#define GLFW_EXPOSE_NATIVE_X11
 #endif
 #endif
 #undef Status                   // X11 headers are leaking this.
@@ -55636,23 +55310,13 @@ void ImGui_ImplDX9_NewFrame()
 #ifdef __EMSCRIPTEN__
 #ifdef EMSCRIPTEN_USE_PORT_CONTRIB_GLFW3
 #else
-#define EMSCRIPTEN_USE_EMBEDDED_GLFW3
 #endif
 #endif
 
 // We gather version tests as define in order to easily see which features are version-dependent.
-#define GLFW_VERSION_COMBINED           (GLFW_VERSION_MAJOR * 1000 + GLFW_VERSION_MINOR * 100 + GLFW_VERSION_REVISION)
-#define GLFW_HAS_CREATECURSOR           (GLFW_VERSION_COMBINED >= 3100) // 3.1+ glfwCreateCursor()
-#define GLFW_HAS_PER_MONITOR_DPI        (GLFW_VERSION_COMBINED >= 3300) // 3.3+ glfwGetMonitorContentScale
 #ifdef GLFW_RESIZE_NESW_CURSOR          // Let's be nice to people who pulled GLFW between 2019-04-16 (3.4 define) and 2019-11-29 (cursors defines) // FIXME: Remove when GLFW 3.4 is released?
-#define GLFW_HAS_NEW_CURSORS            (GLFW_VERSION_COMBINED >= 3400) // 3.4+ GLFW_RESIZE_ALL_CURSOR, GLFW_RESIZE_NESW_CURSOR, GLFW_RESIZE_NWSE_CURSOR, GLFW_NOT_ALLOWED_CURSOR
 #else
-#define GLFW_HAS_NEW_CURSORS            (0)
 #endif
-#define GLFW_HAS_GAMEPAD_API            (GLFW_VERSION_COMBINED >= 3300) // 3.3+ glfwGetGamepadState() new api
-#define GLFW_HAS_GETKEYNAME             (GLFW_VERSION_COMBINED >= 3200) // 3.2+ glfwGetKeyName()
-#define GLFW_HAS_GETERROR               (GLFW_VERSION_COMBINED >= 3300) // 3.3+ glfwGetError()
-#define GLFW_HAS_GETPLATFORM            (GLFW_VERSION_COMBINED >= 3400) // 3.4+ glfwGetPlatform()
 
 // Map GLFWWindow* to ImGuiContext*.
 // - Would be simpler if we could use glfwSetWindowUserPointer()/glfwGetWindowUserPointer(), but this is a single and shared resource.
@@ -56380,16 +56044,12 @@ static void ImGui_ImplGlfw_UpdateGamepads()
     GLFWgamepadstate gamepad;
     if (!glfwGetGamepadState(GLFW_JOYSTICK_1, &gamepad))
         return;
-    #define MAP_BUTTON(KEY_NO, BUTTON_NO, _UNUSED)          do { io.AddKeyEvent(KEY_NO, gamepad.buttons[BUTTON_NO] != 0); } while (0)
-    #define MAP_ANALOG(KEY_NO, AXIS_NO, _UNUSED, V0, V1)    do { float v = gamepad.axes[AXIS_NO]; v = (v - V0) / (V1 - V0); io.AddKeyAnalogEvent(KEY_NO, v > 0.10f, Saturate(v)); } while (0)
 #else
     int axes_count = 0, buttons_count = 0;
     const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axes_count);
     const unsigned char* buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttons_count);
     if (axes_count == 0 || buttons_count == 0)
         return;
-    #define MAP_BUTTON(KEY_NO, _UNUSED, BUTTON_NO)          do { io.AddKeyEvent(KEY_NO, (buttons_count > BUTTON_NO && buttons[BUTTON_NO] == GLFW_PRESS)); } while (0)
-    #define MAP_ANALOG(KEY_NO, _UNUSED, AXIS_NO, V0, V1)    do { float v = (axes_count > AXIS_NO) ? axes[AXIS_NO] : V0; v = (v - V0) / (V1 - V0); io.AddKeyAnalogEvent(KEY_NO, v > 0.10f, Saturate(v)); } while (0)
 #endif
     io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
     MAP_BUTTON(ImGuiKey_GamepadStart,       GLFW_GAMEPAD_BUTTON_START,          7);
@@ -56570,6 +56230,7 @@ void ImGui_ImplGlfw_InstallEmscriptenCallbacks(GLFWwindow* window, const char* c
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_glut.cpp] ===
+
 // dear imgui: Platform Backend for GLUT/FreeGLUT
 // This needs to be used along with a Renderer (e.g. OpenGL2)
 
@@ -56607,7 +56268,6 @@ void ImGui_ImplGlfw_InstallEmscriptenCallbacks(GLFWwindow* window, const char* c
 //  2018-03-22: Added GLUT Platform binding.
 
 #ifndef IMGUI_DISABLE
-#define GL_SILENCE_DEPRECATION
 #ifdef __APPLE__
 #else
 #endif
@@ -56877,6 +56537,7 @@ void ImGui_ImplGLUT_MotionFunc(int x, int y)
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_null.cpp] ===
+
 // dear imgui: Null Platform+Renderer Backends
 // This is designed if you need to use a blind Dear Imgui context with no input and no output.
 
@@ -56979,6 +56640,7 @@ IMGUI_IMPL_API void ImGui_ImplNullRender_RenderDrawData(ImDrawData* draw_data)
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_opengl2.cpp] ===
+
 // dear imgui: Renderer Backend for OpenGL2 (legacy OpenGL, fixed pipeline)
 // This needs to be used along with a Platform Backend (e.g. GLFW, SDL, Win32, custom..)
 
@@ -57039,22 +56701,17 @@ IMGUI_IMPL_API void ImGui_ImplNullRender_RenderDrawData(ImDrawData* draw_data)
 
 // Include OpenGL header (without an OpenGL loader) requires a bit of fiddling
 #if defined(_WIN32) && !defined(APIENTRY)
-#define APIENTRY __stdcall                  // It is customary to use APIENTRY for OpenGL function pointer declarations on all platforms.  Additionally, the Windows OpenGL header needs APIENTRY.
 #endif
 #if defined(_WIN32) && !defined(WINGDIAPI)
-#define WINGDIAPI __declspec(dllimport)     // Some Windows OpenGL headers need this
 #endif
 #if defined(__APPLE__)
-#define GL_SILENCE_DEPRECATION
 #else
 #endif
 
 // [Debugging]
 //#define IMGUI_IMPL_OPENGL_DEBUG
 #ifdef IMGUI_IMPL_OPENGL_DEBUG
-#define GL_CALL(_CALL)      do { _CALL; GLenum gl_err = glGetError(); if (gl_err != 0) fprintf(stderr, "GL error 0x%x returned from '%s'.\n", gl_err, #_CALL); } while (0)  // Call with error check
 #else
-#define GL_CALL(_CALL)      _CALL   // Call without error check
 #endif
 
 // OpenGL data
@@ -57327,6 +56984,7 @@ void    ImGui_ImplOpenGL2_DestroyDeviceObjects()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_opengl3.cpp] ===
+
 // dear imgui: Renderer Backend for modern OpenGL with shaders / programmatic pipeline
 // - Desktop GL: 2.x 3.x 4.x
 // - Embedded GL: ES 2.0 (WebGL 1.0), ES 3.0 (WebGL 2.0)
@@ -57447,7 +57105,6 @@ void    ImGui_ImplOpenGL2_DestroyDeviceObjects()
 //----------------------------------------
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
-#define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #ifndef IMGUI_DISABLE
@@ -57479,7 +57136,6 @@ void    ImGui_ImplOpenGL2_DestroyDeviceObjects()
 #endif
 #if defined(__EMSCRIPTEN__)
 #ifndef GL_GLEXT_PROTOTYPES
-#define GL_GLEXT_PROTOTYPES
 #endif
 #endif
 #elif defined(IMGUI_IMPL_OPENGL_ES3)
@@ -57495,54 +57151,38 @@ void    ImGui_ImplOpenGL2_DestroyDeviceObjects()
 //   Typically you would run: python3 ./gl3w_gen.py --output ../imgui/backends/imgui_impl_opengl3_loader.h --ref ../imgui/backends/imgui_impl_opengl3.cpp ./extra_symbols.txt
 // - You can temporarily use an unstripped version. See https://github.com/dearimgui/gl3w_stripped/releases
 // Changes to this backend using new APIs should be accompanied by a regenerated stripped loader version.
-#define IMGL3W_IMPL
-#define IMGUI_IMPL_OPENGL_LOADER_IMGL3W
 #endif
 
 // Vertex arrays are not supported on ES2/WebGL1 unless Emscripten which uses an extension
 #ifndef IMGUI_IMPL_OPENGL_ES2
-#define IMGUI_IMPL_OPENGL_USE_VERTEX_ARRAY
 #elif defined(__EMSCRIPTEN__)
-#define IMGUI_IMPL_OPENGL_USE_VERTEX_ARRAY
-#define glBindVertexArray       glBindVertexArrayOES
-#define glGenVertexArrays       glGenVertexArraysOES
-#define glDeleteVertexArrays    glDeleteVertexArraysOES
-#define GL_VERTEX_ARRAY_BINDING GL_VERTEX_ARRAY_BINDING_OES
 #endif
 
 // Desktop GL 2.0+ has extension and glPolygonMode() which GL ES and WebGL don't have..
 // A desktop ES context can technically compile fine with our loader, so we also perform a runtime checks
 #if !defined(IMGUI_IMPL_OPENGL_ES2) && !defined(IMGUI_IMPL_OPENGL_ES3)
-#define IMGUI_IMPL_OPENGL_HAS_EXTENSIONS        // has glGetIntegerv(GL_NUM_EXTENSIONS)
-#define IMGUI_IMPL_OPENGL_MAY_HAVE_POLYGON_MODE // may have glPolygonMode()
 #endif
 
 // Desktop GL 2.1+ and GL ES 3.0+ have glBindBuffer() with GL_PIXEL_UNPACK_BUFFER target.
 #if !defined(IMGUI_IMPL_OPENGL_ES2)
-#define IMGUI_IMPL_OPENGL_MAY_HAVE_BIND_BUFFER_PIXEL_UNPACK
 #endif
 
 // Desktop GL 3.1+ has GL_PRIMITIVE_RESTART state
 #if !defined(IMGUI_IMPL_OPENGL_ES2) && !defined(IMGUI_IMPL_OPENGL_ES3) && defined(GL_VERSION_3_1)
-#define IMGUI_IMPL_OPENGL_MAY_HAVE_PRIMITIVE_RESTART
 #endif
 
 // Desktop GL 3.2+ has glDrawElementsBaseVertex() which GL ES and WebGL don't have.
 #if !defined(IMGUI_IMPL_OPENGL_ES2) && !defined(IMGUI_IMPL_OPENGL_ES3) && defined(GL_VERSION_3_2)
-#define IMGUI_IMPL_OPENGL_MAY_HAVE_VTX_OFFSET
 #endif
 
 // Desktop GL 3.3+ and GL ES 3.0+ have glBindSampler()
 #if !defined(IMGUI_IMPL_OPENGL_ES2) && (defined(IMGUI_IMPL_OPENGL_ES3) || defined(GL_VERSION_3_3))
-#define IMGUI_IMPL_OPENGL_MAY_HAVE_BIND_SAMPLER
 #endif
 
 // [Debugging]
 //#define IMGUI_IMPL_OPENGL_DEBUG
 #ifdef IMGUI_IMPL_OPENGL_DEBUG
-#define GL_CALL(_CALL)      do { _CALL; GLenum gl_err = glGetError(); if (gl_err != 0) fprintf(stderr, "GL error 0x%x returned from '%s'.\n", gl_err, #_CALL); } while (0)  // Call with error check
 #else
-#define GL_CALL(_CALL)      _CALL   // Call without error check
 #endif
 
 // OpenGL Data
@@ -58383,6 +58023,7 @@ void    ImGui_ImplOpenGL3_DestroyDeviceObjects()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_sdl2.cpp] ===
+
 // dear imgui: Platform Backend for SDL2
 // This needs to be used along with a Renderer (e.g. DirectX11, OpenGL3, Vulkan..)
 // (Info: SDL2 is a cross-platform general purpose library for handling windows, inputs, graphics context creation, etc.)
@@ -58504,13 +58145,8 @@ void    ImGui_ImplOpenGL3_DestroyDeviceObjects()
 #undef Status // X11 headers are leaking this.
 
 #if SDL_VERSION_ATLEAST(2,0,4) && !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !(defined(__APPLE__) && TARGET_OS_IOS) && !defined(__amigaos4__)
-#define SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE    1
 #else
-#define SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE    0
 #endif
-#define SDL_HAS_PER_MONITOR_DPI             SDL_VERSION_ATLEAST(2,0,4)
-#define SDL_HAS_VULKAN                      SDL_VERSION_ATLEAST(2,0,6)
-#define SDL_HAS_OPEN_URL                    SDL_VERSION_ATLEAST(2,0,14)
 #if SDL_HAS_VULKAN
 #endif
 
@@ -59289,6 +58925,7 @@ void ImGui_ImplSDL2_NewFrame()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_sdl3.cpp] ===
+
 // dear imgui: Platform Backend for SDL3
 // This needs to be used along with a Renderer (e.g. SDL_GPU, DirectX11, OpenGL3, Vulkan..)
 // (Info: SDL3 is a cross-platform general purpose library for handling windows, inputs, graphics context creation, etc.)
@@ -59369,22 +59006,17 @@ void ImGui_ImplSDL2_NewFrame()
 #endif
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
 #endif
 #endif
 
 #if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !(defined(__APPLE__) && TARGET_OS_IOS) && !defined(__amigaos4__)
-#define SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE    1
 #else
-#define SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE    0
 #endif
 
 // FIXME-LEGACY: remove when SDL 3.1.3 preview is released.
 #ifndef SDLK_APOSTROPHE
-#define SDLK_APOSTROPHE SDLK_QUOTE
 #endif
 #ifndef SDLK_GRAVE
-#define SDLK_GRAVE SDLK_BACKQUOTE
 #endif
 
 // SDL Data
@@ -60156,6 +59788,7 @@ void ImGui_ImplSDL3_NewFrame()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_sdlgpu3.cpp] ===
+
 // dear imgui: Renderer Backend for SDL_GPU
 // This needs to be used along with the SDL3 Platform Backend
 
@@ -60837,6 +60470,7 @@ void ImGui_ImplSDLGPU3_NewFrame()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_sdlrenderer2.cpp] ===
+
 // dear imgui: Renderer Backend for SDL_Renderer for SDL2
 // (Requires: SDL 2.0.17+)
 
@@ -61135,6 +60769,7 @@ void ImGui_ImplSDLRenderer2_DestroyDeviceObjects()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_sdlrenderer3.cpp] ===
+
 // dear imgui: Renderer Backend for SDL_Renderer for SDL3
 // (Requires: SDL 3.1.8+)
 
@@ -61449,6 +61084,7 @@ void ImGui_ImplSDLRenderer3_DestroyDeviceObjects()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_vulkan.cpp] ===
+
 // dear imgui: Renderer Backend for Vulkan
 // This needs to be used along with a Platform Backend (e.g. GLFW, SDL, Win32, custom..)
 
@@ -61555,7 +61191,6 @@ void ImGui_ImplSDLRenderer3_DestroyDeviceObjects()
 
 #ifndef IMGUI_DISABLE
 #ifndef IM_MAX
-#define IM_MAX(A, B)    (((A) >= (B)) ? (A) : (B))
 #endif
 #undef Status // X11 headers are leaking this.
 
@@ -61579,13 +61214,11 @@ void ImGui_ImplVulkanH_CreateWindowCommandBuffers(VkPhysicalDevice physical_devi
 // Vulkan prototypes for use with custom loaders
 // (see description of IMGUI_IMPL_VULKAN_NO_PROTOTYPES in imgui_impl_vulkan.h)
 #if defined(VK_NO_PROTOTYPES) && !defined(VOLK_H_)
-#define IMGUI_IMPL_VULKAN_USE_LOADER
 static bool g_FunctionsLoaded = false;
 #else
 static bool g_FunctionsLoaded = true;
 #endif
 #ifdef IMGUI_IMPL_VULKAN_USE_LOADER
-#define IMGUI_VULKAN_FUNC_MAP(IMGUI_VULKAN_FUNC_MAP_MACRO) \
     IMGUI_VULKAN_FUNC_MAP_MACRO(vkAllocateCommandBuffers) \
     IMGUI_VULKAN_FUNC_MAP_MACRO(vkAllocateDescriptorSets) \
     IMGUI_VULKAN_FUNC_MAP_MACRO(vkAllocateMemory) \
@@ -61660,7 +61293,6 @@ static bool g_FunctionsLoaded = true;
     IMGUI_VULKAN_FUNC_MAP_MACRO(vkWaitForFences)
 
 // Define function pointers
-#define IMGUI_VULKAN_FUNC_DEF(func) static PFN_##func func;
 IMGUI_VULKAN_FUNC_MAP(IMGUI_VULKAN_FUNC_DEF)
 #undef IMGUI_VULKAN_FUNC_DEF
 #endif // IMGUI_IMPL_VULKAN_USE_LOADER
@@ -62679,7 +62311,6 @@ bool    ImGui_ImplVulkan_LoadFunctions(uint32_t api_version, PFN_vkVoidFunction(
         api_version = ImGui_ImplVulkan_GetDefaultApiVersion();
 
 #ifdef IMGUI_IMPL_VULKAN_USE_LOADER
-#define IMGUI_VULKAN_FUNC_LOAD(func) \
     func = reinterpret_cast<decltype(func)>(loader_func(#func, user_data)); \
     if (func == nullptr)   \
         return false;
@@ -63346,6 +62977,7 @@ void ImGui_ImplVulkanH_DestroyFrameSemaphores(VkDevice device, ImGui_ImplVulkanH
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_wgpu.cpp] ===
+
 // dear imgui: Renderer for WebGPU
 // This needs to be used along with a Platform Binding (e.g. GLFW, SDL2, SDL3)
 // (Please note that WebGPU is a recent API, may not be supported by all browser, and its ecosystem is generally a mess)
@@ -63406,7 +63038,6 @@ void ImGui_ImplVulkanH_DestroyFrameSemaphores(VkDevice device, ImGui_ImplVulkanH
 // This condition is true when it's built with EMSCRIPTEN using -sUSE_WEBGPU=1 flag  (deprecated from 4.0.10)
 // This condition is false for all other 3 cases: WGPU-Native, DAWN-Native or DAWN-EMSCRIPTEN (using --use-port=emdawnwebgpu flag)
 #if defined(__EMSCRIPTEN__) && defined(IMGUI_IMPL_WEBGPU_BACKEND_WGPU)
-#define IMGUI_IMPL_WEBGPU_BACKEND_WGPU_EMSCRIPTEN
 #endif
 
 #ifdef IMGUI_IMPL_WEBGPU_BACKEND_DAWN
@@ -63417,7 +63048,6 @@ using WGPUProgrammableStageDescriptor = WGPUComputeState;
 
 // Dear ImGui prototypes from imgui_internal.h
 extern ImGuiID ImHashData(const void* data_p, size_t data_size, ImU32 seed);
-#define MEMALIGN(_SIZE,_ALIGN)        (((_SIZE) + ((_ALIGN) - 1)) & ~((_ALIGN) - 1))    // Memory align (copied from IM_ALIGN() macro).
 
 // WebGPU data
 struct ImGui_ImplWGPU_Texture
@@ -64430,6 +64060,7 @@ WGPUSurface ImGui_ImplWGPU_CreateWGPUSurfaceHelper(ImGui_ImplWGPU_CreateSurfaceI
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_win32.cpp] ===
+
 // dear imgui: Platform Backend for Windows (standard windows API for 32-bits AND 64-bits applications)
 // This needs to be used along with a Renderer (e.g. DirectX11, OpenGL3, Vulkan..)
 
@@ -64515,7 +64146,6 @@ WGPUSurface ImGui_ImplWGPU_CreateWGPUSurfaceHelper(ImGui_ImplWGPU_CreateSurfaceI
 
 #ifndef IMGUI_DISABLE
 #ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
 #endif
 
 // Using XInput for gamepad (will load DLL dynamically)
@@ -64783,10 +64413,6 @@ static void ImGui_ImplWin32_UpdateGamepads(ImGuiIO& io)
     if (!bd->HasGamepad || bd->XInputGetState == nullptr || bd->XInputGetState(0, &xinput_state) != ERROR_SUCCESS)
         return;
     io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
-
-    #define IM_SATURATE(V)                      (V < 0.0f ? 0.0f : V > 1.0f ? 1.0f : V)
-    #define MAP_BUTTON(KEY_NO, BUTTON_ENUM)     { io.AddKeyEvent(KEY_NO, (gamepad.wButtons & BUTTON_ENUM) != 0); }
-    #define MAP_ANALOG(KEY_NO, VALUE, V0, V1)   { float vn = (float)(VALUE - V0) / (float)(V1 - V0); io.AddKeyAnalogEvent(KEY_NO, vn > 0.10f, IM_SATURATE(vn)); }
     MAP_BUTTON(ImGuiKey_GamepadStart,           XINPUT_GAMEPAD_START);
     MAP_BUTTON(ImGuiKey_GamepadBack,            XINPUT_GAMEPAD_BACK);
     MAP_BUTTON(ImGuiKey_GamepadFaceLeft,        XINPUT_GAMEPAD_X);
@@ -65010,10 +64636,8 @@ ImGuiKey ImGui_ImplWin32_KeyEventToImGuiKey(WPARAM wParam, LPARAM lParam)
 
 // Allow compilation with old Windows SDK. MinGW doesn't have default _WIN32_WINNT/WINVER versions.
 #ifndef WM_MOUSEHWHEEL
-#define WM_MOUSEHWHEEL 0x020E
 #endif
 #ifndef DBT_DEVNODES_CHANGED
-#define DBT_DEVNODES_CHANGED 0x0007
 #endif
 
 // Helper to obtain the source of mouse messages.
@@ -65284,21 +64908,14 @@ static BOOL _IsWindowsVersionOrGreater(WORD major, WORD minor, WORD)
     return (RtlVerifyVersionInfoFn(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask) == 0) ? TRUE : FALSE;
 }
 
-#define _IsWindowsVistaOrGreater()   _IsWindowsVersionOrGreater(HIBYTE(0x0600), LOBYTE(0x0600), 0) // _WIN32_WINNT_VISTA
-#define _IsWindows8OrGreater()       _IsWindowsVersionOrGreater(HIBYTE(0x0602), LOBYTE(0x0602), 0) // _WIN32_WINNT_WIN8
-#define _IsWindows8Point1OrGreater() _IsWindowsVersionOrGreater(HIBYTE(0x0603), LOBYTE(0x0603), 0) // _WIN32_WINNT_WINBLUE
-#define _IsWindows10OrGreater()      _IsWindowsVersionOrGreater(HIBYTE(0x0A00), LOBYTE(0x0A00), 0) // _WIN32_WINNT_WINTHRESHOLD / _WIN32_WINNT_WIN10
-
 #ifndef DPI_ENUMS_DECLARED
 typedef enum { PROCESS_DPI_UNAWARE = 0, PROCESS_SYSTEM_DPI_AWARE = 1, PROCESS_PER_MONITOR_DPI_AWARE = 2 } PROCESS_DPI_AWARENESS;
 typedef enum { MDT_EFFECTIVE_DPI = 0, MDT_ANGULAR_DPI = 1, MDT_RAW_DPI = 2, MDT_DEFAULT = MDT_EFFECTIVE_DPI } MONITOR_DPI_TYPE;
 #endif
 #ifndef _DPI_AWARENESS_CONTEXTS_
 DECLARE_HANDLE(DPI_AWARENESS_CONTEXT);
-#define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE    (DPI_AWARENESS_CONTEXT)-3
 #endif
 #ifndef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
-#define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 (DPI_AWARENESS_CONTEXT)-4
 #endif
 typedef HRESULT(WINAPI* PFN_SetProcessDpiAwareness)(PROCESS_DPI_AWARENESS);                     // Shcore.lib + dll, Windows 8.1+
 typedef HRESULT(WINAPI* PFN_GetDpiForMonitor)(HMONITOR, MONITOR_DPI_TYPE, UINT*, UINT*);        // Shcore.lib + dll, Windows 8.1+
@@ -65418,6 +65035,7 @@ void ImGui_ImplWin32_EnableAlphaCompositing(void* hwnd)
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: examples_example_allegro5_main.cpp] ===
+
 // Dear ImGui: standalone example application for Allegro 5
 
 // Learn about Dear ImGui:
@@ -65566,6 +65184,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_android_opengl3_main.cpp] ===
+
 // dear imgui: standalone example application for Android + OpenGL ES 3
 
 // Learn about Dear ImGui:
@@ -65950,6 +65569,7 @@ static int GetAssetData(const char* filename, void** outData)
 }
 
 // === [SECTION: examples_example_glfw_opengl2_main.cpp] ===
+
 // Dear ImGui: standalone example application for GLFW + OpenGL2, using legacy fixed pipeline
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
@@ -65964,7 +65584,6 @@ static int GetAssetData(const char* filename, void** outData)
 // See imgui_impl_glfw.cpp for details.
 
 #ifdef __APPLE__
-#define GL_SILENCE_DEPRECATION
 #endif
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
@@ -66126,6 +65745,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_glfw_opengl3_main.cpp] ===
+
 // Dear ImGui: standalone example application for GLFW + OpenGL 3, using programmable pipeline
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
@@ -66134,8 +65754,6 @@ int main(int, char**)
 // - Getting Started      https://dearimgui.com/getting-started
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
-
-#define GL_SILENCE_DEPRECATION
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #endif
 
@@ -66337,6 +65955,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_glfw_vulkan_main.cpp] ===
+
 // Dear ImGui: standalone example application for Glfw + Vulkan
 
 // Learn about Dear ImGui:
@@ -66352,12 +65971,8 @@ int main(int, char**)
 //   the backend itself (imgui_impl_vulkan.cpp), but should PROBABLY NOT be used by your own engine/app code.
 // Read comments in imgui_impl_vulkan.h.
 
-#define GLFW_INCLUDE_NONE
-#define GLFW_INCLUDE_VULKAN
-
 // Volk headers
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
-#define VOLK_IMPLEMENTATION
 #endif
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
@@ -66369,7 +65984,6 @@ int main(int, char**)
 
 //#define APP_USE_UNLIMITED_FRAME_RATE
 #ifdef _DEBUG
-#define APP_USE_VULKAN_DEBUG_REPORT
 static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
 #endif
 
@@ -66874,6 +66488,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_glfw_wgpu_main.cpp] ===
+
 // Dear ImGui: standalone example application for GLFW + WebGPU
 // - Emscripten is supported for publishing on web. See https://emscripten.org.
 // - Dawn is used as a WebGPU implementation on desktop.
@@ -67375,26 +66990,20 @@ static bool InitWGPU(GLFWwindow* window)
 #ifndef __EMSCRIPTEN__
 
 #if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
-#define GLFW_HAS_X11_OR_WAYLAND     1
 #else
-#define GLFW_HAS_X11_OR_WAYLAND     0
 #endif
 #ifdef _WIN32
 #undef APIENTRY
 #ifndef GLFW_EXPOSE_NATIVE_WIN32    // for glfwGetWin32Window()
-#define GLFW_EXPOSE_NATIVE_WIN32
 #endif
 #elif defined(__APPLE__)
 #ifndef GLFW_EXPOSE_NATIVE_COCOA    // for glfwGetCocoaWindow()
-#define GLFW_EXPOSE_NATIVE_COCOA
 #endif
 #elif GLFW_HAS_X11_OR_WAYLAND
 #ifndef GLFW_EXPOSE_NATIVE_X11      // for glfwGetX11Display(), glfwGetX11Window() on Freedesktop (Linux, BSD, etc.)
-#define GLFW_EXPOSE_NATIVE_X11
 #endif
 #ifndef GLFW_EXPOSE_NATIVE_WAYLAND
 #if defined(__has_include) && __has_include(<wayland-client.h>)
-#define GLFW_EXPOSE_NATIVE_WAYLAND
 #endif
 #endif
 #endif
@@ -67441,6 +67050,7 @@ WGPUSurface CreateWGPUSurface(const WGPUInstance& instance, GLFWwindow* window)
 #endif // #ifndef __EMSCRIPTEN__
 
 // === [SECTION: examples_example_glut_opengl2_main.cpp] ===
+
 // Dear ImGui: standalone example application for GLUT/FreeGLUT + OpenGL2, using legacy fixed pipeline
 
 // Learn about Dear ImGui:
@@ -67460,8 +67070,6 @@ WGPUSurface CreateWGPUSurface(const WGPUInstance& instance, GLFWwindow* window)
 //   vcpkg install freeglut --triplet=x86-windows   ; for win32
 //   vcpkg install freeglut --triplet=x64-windows   ; for win64
 //   vcpkg integrate install                        ; register include and libs in Visual Studio
-
-#define GL_SILENCE_DEPRECATION
 #ifdef __APPLE__
 #else
 #endif
@@ -67603,6 +67211,7 @@ void MainLoopStep()
 }
 
 // === [SECTION: examples_example_null_main.cpp] ===
+
 // dear imgui: "null" example application
 // (compile and link imgui, create context, run headless with NO INPUTS, NO GRAPHICS OUTPUT)
 // This is useful to test building, but you cannot interact with anything here!
@@ -67644,6 +67253,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_sdl2_directx11_main.cpp] ===
+
 // Dear ImGui: standalone example application for SDL2 + DirectX 11
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
@@ -67904,6 +67514,7 @@ void CleanupRenderTarget()
 }
 
 // === [SECTION: examples_example_sdl2_opengl2_main.cpp] ===
+
 // Dear ImGui: standalone example application for SDL2 + OpenGL
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
@@ -68089,6 +67700,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_sdl2_opengl3_main.cpp] ===
+
 // Dear ImGui: standalone example application for SDL2 + OpenGL
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
@@ -68322,6 +67934,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_sdl2_sdlrenderer2_main.cpp] ===
+
 // Dear ImGui: standalone example application for SDL2 + SDL_Renderer
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
@@ -68509,6 +68122,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_sdl2_vulkan_main.cpp] ===
+
 // Dear ImGui: standalone example application for SDL2 + Vulkan
 
 // Learn about Dear ImGui:
@@ -68529,12 +68143,10 @@ int main(int, char**)
 
 // Volk headers
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
-#define VOLK_IMPLEMENTATION
 #endif
 
 //#define APP_USE_UNLIMITED_FRAME_RATE
 #ifdef _DEBUG
-#define APP_USE_VULKAN_DEBUG_REPORT
 static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
 #endif
 
@@ -69059,6 +68671,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_sdl2_wgpu_main.cpp] ===
+
 // Dear ImGui: standalone example application for using SDL2 + WebGPU
 // - Emscripten is supported for publishing on web. See https://emscripten.org.
 // - Dawn is used as a WebGPU implementation on desktop.
@@ -69593,6 +69206,7 @@ WGPUSurface CreateWGPUSurface(const WGPUInstance& instance, SDL_Window* window)
 #endif // #ifndef __EMSCRIPTEN__
 
 // === [SECTION: examples_example_sdl3_directx11_main.cpp] ===
+
 // Dear ImGui: standalone example application for SDL3 + DirectX 11
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
@@ -69849,6 +69463,7 @@ void CleanupRenderTarget()
 }
 
 // === [SECTION: examples_example_sdl3_opengl3_main.cpp] ===
+
 // Dear ImGui: standalone example application for SDL3 + OpenGL
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
@@ -70077,6 +69692,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_sdl3_sdlgpu3_main.cpp] ===
+
 // Dear ImGui: standalone example application for SDL3 + SDL_GPU
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
@@ -70304,6 +69920,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_sdl3_sdlrenderer3_main.cpp] ===
+
 // Dear ImGui: standalone example application for SDL3 + SDL_Renderer
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
@@ -70495,6 +70112,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_sdl3_vulkan_main.cpp] ===
+
 // Dear ImGui: standalone example application for SDL3 + Vulkan
 
 // Learn about Dear ImGui:
@@ -70517,12 +70135,10 @@ int main(int, char**)
 
 // Volk headers
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
-#define VOLK_IMPLEMENTATION
 #endif
 
 //#define APP_USE_UNLIMITED_FRAME_RATE
 #ifdef _DEBUG
-#define APP_USE_VULKAN_DEBUG_REPORT
 static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
 #endif
 
@@ -71048,6 +70664,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_sdl3_wgpu_main.cpp] ===
+
 // Dear ImGui: standalone example application for using SDL3 + WebGPU
 // - Emscripten is supported for publishing on web. See https://emscripten.org.
 // - Dawn is used as a WebGPU implementation on desktop.
@@ -71547,7 +71164,6 @@ static bool InitWGPU(SDL_Window* window)
 
 #if defined(SDL_PLATFORM_WIN32)
 #ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN 1
 #endif
 #endif
 
@@ -71593,6 +71209,7 @@ static WGPUSurface CreateWGPUSurface(const WGPUInstance& instance, SDL_Window* w
 #endif // #ifndef __EMSCRIPTEN__
 
 // === [SECTION: examples_example_win32_directx10_main.cpp] ===
+
 // Dear ImGui: standalone example application for Windows API + DirectX 10
 
 // Learn about Dear ImGui:
@@ -71871,6 +71488,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 // === [SECTION: examples_example_win32_directx11_main.cpp] ===
+
 // Dear ImGui: standalone example application for Windows API + DirectX 11
 
 // Learn about Dear ImGui:
@@ -72153,6 +71771,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 // === [SECTION: examples_example_win32_directx12_main.cpp] ===
+
 // Dear ImGui: standalone example application for Windows API + DirectX 12
 
 // Learn about Dear ImGui:
@@ -72163,7 +71782,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
 #ifdef _DEBUG
-#define DX12_ENABLE_DEBUG_LAYER
 #endif
 
 #ifdef DX12_ENABLE_DEBUG_LAYER
@@ -72701,6 +72319,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 // === [SECTION: examples_example_win32_directx9_main.cpp] ===
+
 // Dear ImGui: standalone example application for Windows API + DirectX 9
 
 // Learn about Dear ImGui:
@@ -72972,6 +72591,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 // === [SECTION: examples_example_win32_opengl3_main.cpp] ===
+
 // Dear ImGui: standalone example application for Windows API + OpenGL
 
 // Learn about Dear ImGui:
@@ -72983,7 +72603,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 // This is provided for completeness, however it is strongly recommended you use OpenGL with SDL or GLFW.
 
 #ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
 #endif
 
 // Data stored per platform window
@@ -73221,6 +72840,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 // === [SECTION: examples_example_win32_vulkan_main.cpp] ===
+
 // Dear ImGui: standalone example application for Windows API + Vulkan
 
 // Learn about Dear ImGui:
@@ -73236,16 +72856,12 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //   the backend itself (imgui_impl_vulkan.cpp), but should PROBABLY NOT be used by your own engine/app code.
 // Read comments in imgui_impl_vulkan.h.
 
-#define VK_USE_PLATFORM_WIN32_KHR
-
 // Volk headers
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
-#define VOLK_IMPLEMENTATION
 #endif
 
 //#define APP_USE_UNLIMITED_FRAME_RATE
 #ifdef _DEBUG
-#define APP_USE_VULKAN_DEBUG_REPORT
 #endif
 
 // Data
@@ -73784,6 +73400,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 // === [SECTION: misc_cpp_imgui_stdlib.cpp] ===
+
 // dear imgui: wrappers for C++ standard library (STL) types (std::string, etc.)
 
 // This is also an example of how you may wrap your own similar types.
@@ -73884,6 +73501,7 @@ bool ImGui::InputTextWithHint(const char* label, const char* hint, std::string* 
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: misc_fonts_binary_to_compressed_c.cpp] ===
+
 // dear imgui
 // (binary_to_compressed_c.cpp)
 // Helper tool to turn a file into a C array, if you want to embed font data in your source code.
@@ -73908,8 +73526,6 @@ bool ImGui::InputTextWithHint(const char* label, const char* hint, std::string* 
 //   # binary_to_compressed_c.exe -base85 myfont.ttf MyFont > myfont.cpp
 // Note:
 //   Base85 encoding will be obsoleted by future version of Dear ImGui!
-
-#define _CRT_SECURE_NO_WARNINGS
 
 // stb_compress* from stb.h - declaration
 typedef unsigned int stb_uint;
@@ -74110,7 +73726,6 @@ static void stb__write(unsigned char v)
 }
 
 //#define stb_out(v)    (stb__out ? *stb__out++ = (stb_uchar) (v) : stb__write((stb_uchar) (v)))
-#define stb_out(v)    do { if (stb__out) *stb__out++ = (stb_uchar) (v); else stb__write((stb_uchar) (v)); } while (0)
 
 static void stb_out2(stb_uint v) { stb_out(v >> 8); stb_out(v); }
 static void stb_out3(stb_uint v) { stb_out(v >> 16); stb_out(v >> 8); stb_out(v); }
@@ -74149,9 +73764,6 @@ static  stb_uint stb__hashsize = 32768;
 
 // note that you can play with the hashing functions all you
 // want without needing to change the decompressor
-#define stb__hc(q,h,c)      (((h) << 7) + ((h) >> 25) + q[c])
-#define stb__hc2(q,h,c,d)   (((h) << 14) + ((h) >> 18) + (q[c] << 7) + q[d])
-#define stb__hc3(q,c,d,e)   ((q[c] << 14) + (q[d] << 7) + q[e])
 
 static unsigned int stb__running_adler;
 
@@ -74169,8 +73781,6 @@ static int stb_compress_chunk(stb_uchar *history,
     stb_uchar *lit_start = start - *pending_literals;
     stb_uchar *q = start;
 
-#define STB__SCRAMBLE(h)   (((h) + ((h) >> 16)) & mask)
-
     // stop short of the end so we don't scan off the end doing
     // the hashing; this means we won't compress the last few bytes
     // unless they were part of something longer
@@ -74184,10 +73794,6 @@ static int stb_compress_chunk(stb_uchar *history,
             match_max = (stb_uint)(end-q);
         else
             match_max = 65536;
-
-#define stb__nc(b,d)  ((d) <= window && ((b) > 9 || stb_not_crap((int)(b),(int)(d))))
-
-#define STB__TRY(t,p)  /* avoid retrying a match we already tried */ \
     if (p ? dist != (int)(q-t) : 1)                             \
     if ((m = stb_matchlen(t, q, match_max)) > best)     \
     if (stb__nc(m,q-(t)))                                \
@@ -74306,6 +73912,7 @@ stb_uint stb_compress(stb_uchar *out, stb_uchar *input, stb_uint length)
 }
 
 // === [SECTION: misc_freetype_imgui_freetype.cpp] ===
+
 // dear imgui: FreeType font builder (used as a replacement for the stb_truetype builder)
 // (code)
 
@@ -74400,9 +74007,6 @@ static FT_Error ImGuiLunasvgPortPresetSlot(FT_GlyphSlot slot, FT_Bool cache, FT_
 //-------------------------------------------------------------------------
 // Code
 //-------------------------------------------------------------------------
-
-#define FT_CEIL(X)      (((X + 63) & -64) / 64) // From SDL_ttf: Handy routines for converting from fixed point
-#define FT_SCALEFACTOR  64.0f
 
 // Glyph metrics:
 // --------------
@@ -74585,7 +74189,6 @@ static void ImGui_ImplFreeType_BlitGlyph(const FT_Bitmap* ft_bitmap, uint32_t* d
     case FT_PIXEL_MODE_BGRA:
         {
             // FIXME: Converting pre-multiplied alpha to straight. Doesn't smell good.
-            #define DE_MULTIPLY(color, alpha) ImMin((ImU32)(255.0f * (float)color / (float)(alpha + FLT_MIN) + 0.5f), 255u)
             for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
                 for (uint32_t x = 0; x < w; x++)
                 {
