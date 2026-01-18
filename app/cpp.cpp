@@ -196,8 +196,8 @@ namespace ImGui {
 [IMPLEMENTATION SECTION] - 以下の各セクションはAIが順次処理
 ==============================================================================
 */
-
 // === [SECTION: imgui.cpp] ===
+
 
 // dear imgui, v1.92.6 WIP
 // (main code and documentation)
@@ -18364,6 +18364,7 @@ void ImGui::ShowFontSelector(const char* label)
 
 // === [SECTION: imgui_demo.cpp] ===
 
+
 // dear imgui, v1.92.6 WIP
 // (demo code)
 
@@ -29249,6 +29250,7 @@ bool ImGui::ShowStyleSelector(const char*) { return false; }
 
 // === [SECTION: imgui_draw.cpp] ===
 
+
 // dear imgui, v1.92.6 WIP
 // (drawing and font code)
 
@@ -35996,6 +35998,7 @@ static const char* GetDefaultCompressedFontDataProggyVector(int* out_size)
 
 // === [SECTION: imgui_tables.cpp] ===
 
+
 // dear imgui, v1.92.6 WIP
 // (tables and columns code)
 
@@ -40593,6 +40596,7 @@ void ImGui::Columns(int columns_count, const char* id, bool borders)
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: imgui_widgets.cpp] ===
+
 
 // dear imgui, v1.92.6 WIP
 // (widgets code)
@@ -51401,6 +51405,8 @@ void ImGui::TabItemLabelAndCloseButton(ImDrawList* draw_list, const ImRect& bb, 
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_allegro5.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Renderer + Platform Backend for Allegro 5
 // (Info: Allegro 5 is a cross-platform general purpose library for handling windows, inputs, graphics, etc.)
@@ -52091,7 +52097,10 @@ void ImGui_ImplAllegro5_NewFrame()
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_android.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_android.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Platform Binding for Android native app
 // This needs to be used along with the OpenGL 3 Renderer (imgui_impl_opengl3)
@@ -52395,7 +52404,10 @@ void ImGui_ImplAndroid_NewFrame()
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_dx10.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_dx10.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Renderer Backend for DirectX10
 // This needs to be used along with a Platform Backend (e.g. Win32)
@@ -53051,7 +53063,10 @@ void ImGui_ImplDX10_NewFrame()
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_dx11.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_dx11.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Renderer Backend for DirectX11
 // This needs to be used along with a Platform Backend (e.g. Win32)
@@ -53728,7 +53743,10 @@ void ImGui_ImplDX11_NewFrame()
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_dx12.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_dx12.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Renderer Backend for DirectX12
 // This needs to be used along with a Platform Backend (e.g. Win32)
@@ -54697,7 +54715,10 @@ void ImGui_ImplDX12_NewFrame()
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_dx9.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_dx9.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Renderer Backend for DirectX9
 // This needs to be used along with a Platform Backend (e.g. Win32)
@@ -55174,7 +55195,9 @@ void ImGui_ImplDX9_NewFrame()
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_glfw.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_glfw.cpp] ===
+
 
 // dear imgui: Platform Backend for GLFW
 // This needs to be used along with a Renderer (e.g. OpenGL3, Vulkan, WebGPU..)
@@ -56230,6 +56253,8 @@ void ImGui_ImplGlfw_InstallEmscriptenCallbacks(GLFWwindow* window, const char* c
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_glut.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Platform Backend for GLUT/FreeGLUT
 // This needs to be used along with a Renderer (e.g. OpenGL2)
@@ -56536,7 +56561,10 @@ void ImGui_ImplGLUT_MotionFunc(int x, int y)
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_null.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_null.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Null Platform+Renderer Backends
 // This is designed if you need to use a blind Dear Imgui context with no input and no output.
@@ -56639,7 +56667,10 @@ IMGUI_IMPL_API void ImGui_ImplNullRender_RenderDrawData(ImDrawData* draw_data)
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_opengl2.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_opengl2.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Renderer Backend for OpenGL2 (legacy OpenGL, fixed pipeline)
 // This needs to be used along with a Platform Backend (e.g. GLFW, SDL, Win32, custom..)
@@ -56983,7 +57014,9 @@ void    ImGui_ImplOpenGL2_DestroyDeviceObjects()
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_opengl3.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_opengl3.cpp] ===
+
 
 // dear imgui: Renderer Backend for modern OpenGL with shaders / programmatic pipeline
 // - Desktop GL: 2.x 3.x 4.x
@@ -58023,6 +58056,8 @@ void    ImGui_ImplOpenGL3_DestroyDeviceObjects()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_sdl2.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Platform Backend for SDL2
 // This needs to be used along with a Renderer (e.g. DirectX11, OpenGL3, Vulkan..)
@@ -58924,7 +58959,10 @@ void ImGui_ImplSDL2_NewFrame()
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_sdl3.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_sdl3.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Platform Backend for SDL3
 // This needs to be used along with a Renderer (e.g. SDL_GPU, DirectX11, OpenGL3, Vulkan..)
@@ -59787,7 +59825,10 @@ void ImGui_ImplSDL3_NewFrame()
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_sdlgpu3.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_sdlgpu3.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Renderer Backend for SDL_GPU
 // This needs to be used along with the SDL3 Platform Backend
@@ -60469,7 +60510,10 @@ void ImGui_ImplSDLGPU3_NewFrame()
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_sdlrenderer2.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_sdlrenderer2.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Renderer Backend for SDL_Renderer for SDL2
 // (Requires: SDL 2.0.17+)
@@ -60768,7 +60812,10 @@ void ImGui_ImplSDLRenderer2_DestroyDeviceObjects()
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_sdlrenderer3.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_sdlrenderer3.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Renderer Backend for SDL_Renderer for SDL3
 // (Requires: SDL 3.1.8+)
@@ -61083,7 +61130,10 @@ void ImGui_ImplSDLRenderer3_DestroyDeviceObjects()
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_vulkan.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_vulkan.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Renderer Backend for Vulkan
 // This needs to be used along with a Platform Backend (e.g. GLFW, SDL, Win32, custom..)
@@ -62976,7 +63026,10 @@ void ImGui_ImplVulkanH_DestroyFrameSemaphores(VkDevice device, ImGui_ImplVulkanH
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_wgpu.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_wgpu.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Renderer for WebGPU
 // This needs to be used along with a Platform Binding (e.g. GLFW, SDL2, SDL3)
@@ -64059,7 +64112,10 @@ WGPUSurface ImGui_ImplWGPU_CreateWGPUSurfaceHelper(ImGui_ImplWGPU_CreateSurfaceI
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: backends_imgui_impl_win32.cpp] ===
+
+#endif // #if 0// === [SECTION: backends_imgui_impl_win32.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: Platform Backend for Windows (standard windows API for 32-bits AND 64-bits applications)
 // This needs to be used along with a Renderer (e.g. DirectX11, OpenGL3, Vulkan..)
@@ -65034,7 +65090,10 @@ void ImGui_ImplWin32_EnableAlphaCompositing(void* hwnd)
 
 #endif // #ifndef IMGUI_DISABLE
 
-// === [SECTION: examples_example_allegro5_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_allegro5_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for Allegro 5
 
@@ -65183,7 +65242,10 @@ int main(int, char**)
     return 0;
 }
 
-// === [SECTION: examples_example_android_opengl3_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_android_opengl3_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: standalone example application for Android + OpenGL ES 3
 
@@ -65568,7 +65630,10 @@ static int GetAssetData(const char* filename, void** outData)
     return num_bytes;
 }
 
-// === [SECTION: examples_example_glfw_opengl2_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_glfw_opengl2_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for GLFW + OpenGL2, using legacy fixed pipeline
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
@@ -65744,7 +65809,9 @@ int main(int, char**)
     return 0;
 }
 
-// === [SECTION: examples_example_glfw_opengl3_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_glfw_opengl3_main.cpp] ===
+
 
 // Dear ImGui: standalone example application for GLFW + OpenGL 3, using programmable pipeline
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
@@ -65955,6 +66022,8 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_glfw_vulkan_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for Glfw + Vulkan
 
@@ -66487,7 +66556,10 @@ int main(int, char**)
     return 0;
 }
 
-// === [SECTION: examples_example_glfw_wgpu_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_glfw_wgpu_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for GLFW + WebGPU
 // - Emscripten is supported for publishing on web. See https://emscripten.org.
@@ -67049,7 +67121,10 @@ WGPUSurface CreateWGPUSurface(const WGPUInstance& instance, GLFWwindow* window)
 }
 #endif // #ifndef __EMSCRIPTEN__
 
-// === [SECTION: examples_example_glut_opengl2_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_glut_opengl2_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for GLUT/FreeGLUT + OpenGL2, using legacy fixed pipeline
 
@@ -67210,7 +67285,10 @@ void MainLoopStep()
     glutPostRedisplay();
 }
 
-// === [SECTION: examples_example_null_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_null_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // dear imgui: "null" example application
 // (compile and link imgui, create context, run headless with NO INPUTS, NO GRAPHICS OUTPUT)
@@ -67252,7 +67330,10 @@ int main(int, char**)
     return 0;
 }
 
-// === [SECTION: examples_example_sdl2_directx11_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_sdl2_directx11_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for SDL2 + DirectX 11
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
@@ -67513,7 +67594,10 @@ void CleanupRenderTarget()
     if (g_mainRenderTargetView) { g_mainRenderTargetView->Release(); g_mainRenderTargetView = nullptr; }
 }
 
-// === [SECTION: examples_example_sdl2_opengl2_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_sdl2_opengl2_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for SDL2 + OpenGL
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
@@ -67699,7 +67783,10 @@ int main(int, char**)
     return 0;
 }
 
-// === [SECTION: examples_example_sdl2_opengl3_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_sdl2_opengl3_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for SDL2 + OpenGL
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
@@ -67933,7 +68020,10 @@ int main(int, char**)
     return 0;
 }
 
-// === [SECTION: examples_example_sdl2_sdlrenderer2_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_sdl2_sdlrenderer2_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for SDL2 + SDL_Renderer
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
@@ -68121,7 +68211,10 @@ int main(int, char**)
     return 0;
 }
 
-// === [SECTION: examples_example_sdl2_vulkan_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_sdl2_vulkan_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for SDL2 + Vulkan
 
@@ -68670,7 +68763,10 @@ int main(int, char**)
     return 0;
 }
 
-// === [SECTION: examples_example_sdl2_wgpu_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_sdl2_wgpu_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for using SDL2 + WebGPU
 // - Emscripten is supported for publishing on web. See https://emscripten.org.
@@ -69205,7 +69301,10 @@ WGPUSurface CreateWGPUSurface(const WGPUInstance& instance, SDL_Window* window)
 }
 #endif // #ifndef __EMSCRIPTEN__
 
-// === [SECTION: examples_example_sdl3_directx11_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_sdl3_directx11_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for SDL3 + DirectX 11
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
@@ -69462,7 +69561,10 @@ void CleanupRenderTarget()
     if (g_mainRenderTargetView) { g_mainRenderTargetView->Release(); g_mainRenderTargetView = nullptr; }
 }
 
-// === [SECTION: examples_example_sdl3_opengl3_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_sdl3_opengl3_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for SDL3 + OpenGL
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
@@ -69691,7 +69793,10 @@ int main(int, char**)
     return 0;
 }
 
-// === [SECTION: examples_example_sdl3_sdlgpu3_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_sdl3_sdlgpu3_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for SDL3 + SDL_GPU
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
@@ -69919,7 +70024,10 @@ int main(int, char**)
     return 0;
 }
 
-// === [SECTION: examples_example_sdl3_sdlrenderer3_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_sdl3_sdlrenderer3_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for SDL3 + SDL_Renderer
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
@@ -70111,7 +70219,10 @@ int main(int, char**)
     return 0;
 }
 
-// === [SECTION: examples_example_sdl3_vulkan_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_sdl3_vulkan_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for SDL3 + Vulkan
 
@@ -70663,7 +70774,10 @@ int main(int, char**)
     return 0;
 }
 
-// === [SECTION: examples_example_sdl3_wgpu_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_sdl3_wgpu_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for using SDL3 + WebGPU
 // - Emscripten is supported for publishing on web. See https://emscripten.org.
@@ -71208,7 +71322,10 @@ static WGPUSurface CreateWGPUSurface(const WGPUInstance& instance, SDL_Window* w
 }
 #endif // #ifndef __EMSCRIPTEN__
 
-// === [SECTION: examples_example_win32_directx10_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_win32_directx10_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for Windows API + DirectX 10
 
@@ -71487,7 +71604,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 
-// === [SECTION: examples_example_win32_directx11_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_win32_directx11_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for Windows API + DirectX 11
 
@@ -71770,7 +71890,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 
-// === [SECTION: examples_example_win32_directx12_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_win32_directx12_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for Windows API + DirectX 12
 
@@ -72318,7 +72441,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 
-// === [SECTION: examples_example_win32_directx9_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_win32_directx9_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for Windows API + DirectX 9
 
@@ -72590,7 +72716,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 
-// === [SECTION: examples_example_win32_opengl3_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_win32_opengl3_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for Windows API + OpenGL
 
@@ -72839,7 +72968,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 
-// === [SECTION: examples_example_win32_vulkan_main.cpp] ===
+
+#endif // #if 0// === [SECTION: examples_example_win32_vulkan_main.cpp] ===
+#if 0 // Disabled by AI for backend filtering
+
 
 // Dear ImGui: standalone example application for Windows API + Vulkan
 
@@ -73399,7 +73531,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 
-// === [SECTION: misc_cpp_imgui_stdlib.cpp] ===
+
+#endif // #if 0// === [SECTION: misc_cpp_imgui_stdlib.cpp] ===
+
 
 // dear imgui: wrappers for C++ standard library (STL) types (std::string, etc.)
 
@@ -73501,6 +73635,7 @@ bool ImGui::InputTextWithHint(const char* label, const char* hint, std::string* 
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: misc_fonts_binary_to_compressed_c.cpp] ===
+
 
 // dear imgui
 // (binary_to_compressed_c.cpp)
@@ -73912,6 +74047,7 @@ stb_uint stb_compress(stb_uchar *out, stb_uchar *input, stb_uint length)
 }
 
 // === [SECTION: misc_freetype_imgui_freetype.cpp] ===
+
 
 // dear imgui: FreeType font builder (used as a replacement for the stb_truetype builder)
 // (code)
