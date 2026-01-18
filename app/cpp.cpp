@@ -149,8 +149,13 @@
 
 // --- 2. GLOBAL MACROS & CONFIG ---
 
+
+// --- Extracted Macros ---
+
 // --- 3. FORWARD DECLARATIONS ---
 
+
+// --- 3.5. TYPE DEFINITIONS (Struct/Class/Enum Bodies) ---
 // --- 4. FUNCTION PROTOTYPES (The "Recipe" List) ---
 // 「処理」の目次。全ての実装セクションからシグネチャをコピー
 // (今回はimgui.hのパブリックAPIのみを抽出)
