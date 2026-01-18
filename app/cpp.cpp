@@ -189,14 +189,490 @@ namespace ImGui {
     IMGUI_API bool          RadioButton(const char* label, bool active);                    // use with e.g. if (RadioButton("one", my_value==1)) { my_value = 1;
 }
 
+
+// --- 4.5. INLINE FUNCTION IMPLEMENTATIONS ---
+
+static inline ImDrawFlags FixRectCornerFlags(ImDrawFlags flags)
+{
+    /*
+    IM_STATIC_ASSERT(ImDrawFlags_RoundCornersTopLeft == (1 << 4));
+#ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
+    // Obsoleted in 1.82 (from February 2021). This code was stripped/simplified and mostly commented in 1.90 (from September 2023)
+    // - Legacy Support for hard coded ~0 (used to be a suggested equivalent to ImDrawCornerFlags_All)
+    if (flags == ~0)                    { return ImDrawFlags_RoundCornersAll; }
+    // - Legacy Support for hard coded 0x01 to 0x0F (matching 15 out of 16 old flags combinations). Read details in older version of this code.
+    if (flags >= 0x01 && flags <= 0x0F) { return (flags << 4); }
+    // We cannot support hard coded 0x00 with 'float rounding > 0.0f' --> replace with ImDrawFlags_RoundCornersNone or use 'float rounding = 0.0f'
+#endif
+    */
+    // If this assert triggers, please update your code replacing hardcoded values with new ImDrawFlags_RoundCorners* values.
+    // Note that ImDrawFlags_Closed (== 0x01) is an invalid flag for AddRect(), AddRectFilled(), PathRect() etc. anyway.
+    // See details in 1.82 Changelog as well as 2021/03/12 and 2023/09/08 entries in "API BREAKING CHANGES" section.
+    IM_ASSERT((flags & 0x0F) == 0 && "Misuse of legacy hardcoded ImDrawCornerFlags values!");
+
+    if ((flags & ImDrawFlags_RoundCornersMask_) == 0)
+        flags |= ImDrawFlags_RoundCornersAll;
+
+    return flags;
+}
+
+
+static inline ImGuiSortDirection TableGetColumnAvailSortDirection(ImGuiTableColumn* column, int n)
+{
+    IM_ASSERT(n < column->SortDirectionsAvailCount);
+    return (ImGuiSortDirection)((column->SortDirectionsAvailList >> (n << 1)) & 0x03);
+}
+
+
+static inline ImVec2 CalcWindowMinSize(ImGuiWindow* window)
+{
+    // We give windows non-zero minimum size to facilitate understanding problematic cases (e.g. empty popups)
+    // FIXME: Essentially we want to restrict manual resizing to WindowMinSize+Decoration, and allow api resizing to be smaller.
+    // Perhaps should tend further a neater test for this.
+    ImGuiContext& g = *GImGui;
+    ImVec2 size_min;
+    if ((window->Flags & ImGuiWindowFlags_ChildWindow) && !(window->Flags & ImGuiWindowFlags_Popup))
+    {
+        size_min.x = (window->ChildFlags & ImGuiChildFlags_ResizeX) ? g.Style.WindowMinSize.x : IMGUI_WINDOW_HARD_MIN_SIZE;
+        size_min.y = (window->ChildFlags & ImGuiChildFlags_ResizeY) ? g.Style.WindowMinSize.y : IMGUI_WINDOW_HARD_MIN_SIZE;
+    }
+    else
+    {
+        size_min.x = ((window->Flags & ImGuiWindowFlags_AlwaysAutoResize) == 0) ? g.Style.WindowMinSize.x : IMGUI_WINDOW_HARD_MIN_SIZE;
+        size_min.y = ((window->Flags & ImGuiWindowFlags_AlwaysAutoResize) == 0) ? g.Style.WindowMinSize.y : IMGUI_WINDOW_HARD_MIN_SIZE;
+    }
+
+    // Reduce artifacts with very small windows
+    ImGuiWindow* window_for_height = window;
+    size_min.y = ImMax(size_min.y, window_for_height->TitleBarHeight + window_for_height->MenuBarHeight + ImMax(0.0f, g.Style.WindowRounding - 1.0f));
+    return size_min;
+}
+
+
+static inline float CalcDelayFromHoveredFlags(ImGuiHoveredFlags flags)
+{
+    ImGuiContext& g = *GImGui;
+    if (flags & ImGuiHoveredFlags_DelayNormal)
+        return g.Style.HoverDelayNormal;
+    if (flags & ImGuiHoveredFlags_DelayShort)
+        return g.Style.HoverDelayShort;
+    return 0.0f;
+}
+
+
+static inline float ImAcos01(float x)
+{
+    if (x <= 0.0f) return IM_PI * 0.5f;
+    if (x >= 1.0f) return 0.0f;
+    return ImAcos(x);
+    //return (-0.69813170079773212f * x * x - 0.87266462599716477f) * x + 1.5707963267948966f; // Cheap approximation, may be enough for what we do.
+}
+
+
+static inline float Saturate(float v) { return v < 0.0f ? 0.0f : v  > 1.0f ? 1.0f : v; }
+static void ImGui_ImplSDL2_UpdateGamepadAnalog(ImGui_ImplSDL2_Data* bd, ImGuiIO& io, ImGuiKey key, SDL_GameControllerAxis axis_no, float v0, float v1)
+{
+    float merged_value = 0.0f;
+    for (SDL_GameController* gamepad : bd->Gamepads)
+    {
+        float vn = Saturate((float)(SDL_GameControllerGetAxis(gamepad, axis_no) - v0) / (float)(v1 - v0));
+        if (merged_value < vn)
+            merged_value = vn;
+    }
+    io.AddKeyAnalogEvent(key, merged_value > 0.1f, merged_value);
+}
+
+
+static inline float Saturate(float v) { return v < 0.0f ? 0.0f : v  > 1.0f ? 1.0f : v; }
+static void ImGui_ImplSDL3_UpdateGamepadAnalog(ImGui_ImplSDL3_Data* bd, ImGuiIO& io, ImGuiKey key, SDL_GamepadAxis axis_no, float v0, float v1)
+{
+    float merged_value = 0.0f;
+    for (SDL_Gamepad* gamepad : bd->Gamepads)
+    {
+        float vn = Saturate((float)(SDL_GetGamepadAxis(gamepad, axis_no) - v0) / (float)(v1 - v0));
+        if (merged_value < vn)
+            merged_value = vn;
+    }
+    io.AddKeyAnalogEvent(key, merged_value > 0.1f, merged_value);
+}
+
+
+static inline int GetWindowDisplayLayer(ImGuiWindow* window)
+{
+    return (window->Flags & ImGuiWindowFlags_Tooltip) ? 1 : 0;
+}
+
+
+static inline int ImTextCountUtf8BytesFromChar(unsigned int c)
+{
+    if (c < 0x80) return 1;
+    if (c < 0x800) return 2;
+    if (c < 0x10000) return 3;
+    if (c <= 0x10FFFF) return 4;
+    return 3;
+}
+
+
+static inline int TabItemGetSectionIdx(const ImGuiTabItem* tab)
+{
+    return (tab->Flags & ImGuiTabItemFlags_Leading) ? 0 : (tab->Flags & ImGuiTabItemFlags_Trailing) ? 2 : 1;
+}
+
+
+static inline void ClampWindowPos(ImGuiWindow* window, const ImRect& visibility_rect)
+{
+    ImVec2 size_for_clamping = window->Size;
+    if (!(window->BgClickFlags & ImGuiWindowBgClickFlags_Move) && !(window->Flags & ImGuiWindowFlags_NoTitleBar))
+        size_for_clamping.y = window->TitleBarHeight;
+    window->Pos = ImClamp(window->Pos, visibility_rect.Min - size_for_clamping, visibility_rect.Max);
+}
+
+
+static inline void ImGui::NavUpdateAnyRequestFlag()
+{
+    ImGuiContext& g = *GImGui;
+    g.NavAnyRequest = g.NavMoveScoringItems || g.NavInitRequest || (IMGUI_DEBUG_NAV_SCORING && g.NavWindow != NULL);
+    if (g.NavAnyRequest)
+        IM_ASSERT(g.NavWindow != NULL);
+}
+
+inline ImGuiTableFlags TableFixFlags(ImGuiTableFlags flags, ImGuiWindow* outer_window)
+{
+    // Adjust flags: set default sizing policy
+    if ((flags & ImGuiTableFlags_SizingMask_) == 0)
+        flags |= ((flags & ImGuiTableFlags_ScrollX) || (outer_window->Flags & ImGuiWindowFlags_AlwaysAutoResize)) ? ImGuiTableFlags_SizingFixedFit : ImGuiTableFlags_SizingStretchSame;
+
+    // Adjust flags: enable NoKeepColumnsVisible when using ImGuiTableFlags_SizingFixedSame
+    if ((flags & ImGuiTableFlags_SizingMask_) == ImGuiTableFlags_SizingFixedSame)
+        flags |= ImGuiTableFlags_NoKeepColumnsVisible;
+
+    // Adjust flags: enforce borders when resizable
+    if (flags & ImGuiTableFlags_Resizable)
+        flags |= ImGuiTableFlags_BordersInnerV;
+
+    // Adjust flags: disable NoHostExtendX/NoHostExtendY if we have any scrolling going on
+    if (flags & (ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY))
+        flags &= ~(ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_NoHostExtendY);
+
+    // Adjust flags: NoBordersInBodyUntilResize takes priority over NoBordersInBody
+    if (flags & ImGuiTableFlags_NoBordersInBodyUntilResize)
+        flags &= ~ImGuiTableFlags_NoBordersInBody;
+
+    // Adjust flags: disable saved settings if there's nothing to save
+    if ((flags & (ImGuiTableFlags_Resizable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Sortable)) == 0)
+        flags |= ImGuiTableFlags_NoSavedSettings;
+
+    // Inherit _NoSavedSettings from top-level window (child windows always have _NoSavedSettings set)
+    if (outer_window->RootWindow->Flags & ImGuiWindowFlags_NoSavedSettings)
+        flags |= ImGuiTableFlags_NoSavedSettings;
+
+    return flags;
+}
+
+static inline ImGuiID GetRoutingIdFromOwnerId(ImGuiID owner_id)
+{
+    ImGuiContext& g = *GImGui;
+    return (owner_id != ImGuiKeyOwner_NoOwner && owner_id != ImGuiKeyOwner_Any) ? owner_id : g.CurrentFocusScopeId;
+}
+
+static inline VkDeviceSize AlignBufferSize(VkDeviceSize size, VkDeviceSize alignment)
+{
+    return (size + alignment - 1) & ~(alignment - 1);
+}
+
+static inline float Saturate(float v) { return v < 0.0f ? 0.0f : v  > 1.0f ? 1.0f : v; }
+static void ImGui_ImplGlfw_UpdateGamepads()
+{
+    ImGuiIO& io = ImGui::GetIO();
+    if ((io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad) == 0) // FIXME: Technically feeding gamepad shouldn't depend on this now that they are regular inputs, but see #8075
+        return;
+
+    io.BackendFlags &= ~ImGuiBackendFlags_HasGamepad;
+#if GLFW_HAS_GAMEPAD_API && !defined(EMSCRIPTEN_USE_EMBEDDED_GLFW3)
+    GLFWgamepadstate gamepad;
+    if (!glfwGetGamepadState(GLFW_JOYSTICK_1, &gamepad))
+        return;
+#else
+    int axes_count = 0, buttons_count = 0;
+    const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axes_count);
+    const unsigned char* buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttons_count);
+    if (axes_count == 0 || buttons_count == 0)
+        return;
+#endif
+    io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
+    MAP_BUTTON(ImGuiKey_GamepadStart,       GLFW_GAMEPAD_BUTTON_START,          7);
+    MAP_BUTTON(ImGuiKey_GamepadBack,        GLFW_GAMEPAD_BUTTON_BACK,           6);
+    MAP_BUTTON(ImGuiKey_GamepadFaceLeft,    GLFW_GAMEPAD_BUTTON_X,              2);     // Xbox X, PS Square
+    MAP_BUTTON(ImGuiKey_GamepadFaceRight,   GLFW_GAMEPAD_BUTTON_B,              1);     // Xbox B, PS Circle
+    MAP_BUTTON(ImGuiKey_GamepadFaceUp,      GLFW_GAMEPAD_BUTTON_Y,              3);     // Xbox Y, PS Triangle
+    MAP_BUTTON(ImGuiKey_GamepadFaceDown,    GLFW_GAMEPAD_BUTTON_A,              0);     // Xbox A, PS Cross
+    MAP_BUTTON(ImGuiKey_GamepadDpadLeft,    GLFW_GAMEPAD_BUTTON_DPAD_LEFT,      13);
+    MAP_BUTTON(ImGuiKey_GamepadDpadRight,   GLFW_GAMEPAD_BUTTON_DPAD_RIGHT,     11);
+    MAP_BUTTON(ImGuiKey_GamepadDpadUp,      GLFW_GAMEPAD_BUTTON_DPAD_UP,        10);
+    MAP_BUTTON(ImGuiKey_GamepadDpadDown,    GLFW_GAMEPAD_BUTTON_DPAD_DOWN,      12);
+    MAP_BUTTON(ImGuiKey_GamepadL1,          GLFW_GAMEPAD_BUTTON_LEFT_BUMPER,    4);
+    MAP_BUTTON(ImGuiKey_GamepadR1,          GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER,   5);
+    MAP_ANALOG(ImGuiKey_GamepadL2,          GLFW_GAMEPAD_AXIS_LEFT_TRIGGER,     4,      -0.75f,  +1.0f);
+    MAP_ANALOG(ImGuiKey_GamepadR2,          GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER,    5,      -0.75f,  +1.0f);
+    MAP_BUTTON(ImGuiKey_GamepadL3,          GLFW_GAMEPAD_BUTTON_LEFT_THUMB,     8);
+    MAP_BUTTON(ImGuiKey_GamepadR3,          GLFW_GAMEPAD_BUTTON_RIGHT_THUMB,    9);
+    MAP_ANALOG(ImGuiKey_GamepadLStickLeft,  GLFW_GAMEPAD_AXIS_LEFT_X,           0,      -0.25f,  -1.0f);
+    MAP_ANALOG(ImGuiKey_GamepadLStickRight, GLFW_GAMEPAD_AXIS_LEFT_X,           0,      +0.25f,  +1.0f);
+    MAP_ANALOG(ImGuiKey_GamepadLStickUp,    GLFW_GAMEPAD_AXIS_LEFT_Y,           1,      -0.25f,  -1.0f);
+    MAP_ANALOG(ImGuiKey_GamepadLStickDown,  GLFW_GAMEPAD_AXIS_LEFT_Y,           1,      +0.25f,  +1.0f);
+    MAP_ANALOG(ImGuiKey_GamepadRStickLeft,  GLFW_GAMEPAD_AXIS_RIGHT_X,          2,      -0.25f,  -1.0f);
+    MAP_ANALOG(ImGuiKey_GamepadRStickRight, GLFW_GAMEPAD_AXIS_RIGHT_X,          2,      +0.25f,  +1.0f);
+    MAP_ANALOG(ImGuiKey_GamepadRStickUp,    GLFW_GAMEPAD_AXIS_RIGHT_Y,          3,      -0.25f,  -1.0f);
+    MAP_ANALOG(ImGuiKey_GamepadRStickDown,  GLFW_GAMEPAD_AXIS_RIGHT_Y,          3,      +0.25f,  +1.0f);
+    #undef MAP_BUTTON
+    #undef MAP_ANALOG
+}
+
+static inline int ImTextCharToUtf8_inline(char* buf, int buf_size, unsigned int c)
+{
+    if (c < 0x80)
+    {
+        buf[0] = (char)c;
+        return 1;
+    }
+    if (c < 0x800)
+    {
+        if (buf_size < 2) return 0;
+        buf[0] = (char)(0xc0 + (c >> 6));
+        buf[1] = (char)(0x80 + (c & 0x3f));
+        return 2;
+    }
+    if (c < 0x10000)
+    {
+        if (buf_size < 3) return 0;
+        buf[0] = (char)(0xe0 + (c >> 12));
+        buf[1] = (char)(0x80 + ((c >> 6) & 0x3f));
+        buf[2] = (char)(0x80 + ((c ) & 0x3f));
+        return 3;
+    }
+    if (c <= 0x10FFFF)
+    {
+        if (buf_size < 4) return 0;
+        buf[0] = (char)(0xf0 + (c >> 18));
+        buf[1] = (char)(0x80 + ((c >> 12) & 0x3f));
+        buf[2] = (char)(0x80 + ((c >> 6) & 0x3f));
+        buf[3] = (char)(0x80 + ((c ) & 0x3f));
+        return 4;
+    }
+    // Invalid code point, the max unicode is 0x10FFFF
+    return 0;
+}
+
+static inline void      NavUpdateAnyRequestFlag();
+static void             NavUpdateCreateWrappingRequest();
+static void             NavEndFrame();
+static bool             NavScoreItem(ImGuiNavItemData* result, const ImRect& nav_bb);
+static void             NavApplyItemToResult(ImGuiNavItemData* result);
+static void             NavProcessItem();
+static void             NavProcessItemForTabbingRequest(ImGuiID id, ImGuiItemFlags item_flags, ImGuiNavMoveFlags move_flags);
+static ImGuiInputSource NavCalcPreferredRefPosSource(ImGuiWindowFlags window_type);
+static ImVec2           NavCalcPreferredRefPos(ImGuiWindowFlags window_type);
+static void             NavSaveLastChildNavWindowIntoParent(ImGuiWindow* nav_window);
+static ImGuiWindow*     NavRestoreLastChildNavWindow(ImGuiWindow* window);
+static void             NavRestoreLayer(ImGuiNavLayer layer);
+
+// Error Checking and Debug Tools
+static void             ErrorCheckNewFrameSanityChecks();
+static void             ErrorCheckEndFrameSanityChecks();
+#ifndef IMGUI_DISABLE_DEBUG_TOOLS
+static void             UpdateDebugToolItemPicker();
+static void             UpdateDebugToolItemPathQuery();
+static void             UpdateDebugToolFlashStyleColor();
+#endif
+
+// Inputs
+static void             UpdateKeyboardInputs();
+static void             UpdateMouseInputs();
+static void             UpdateMouseWheel();
+static void             UpdateKeyRoutingTable(ImGuiKeyRoutingTable* rt);
+
+// Misc
+static void             UpdateFontsNewFrame();
+static void             UpdateFontsEndFrame();
+static void             UpdateTexturesNewFrame();
+static void             UpdateTexturesEndFrame();
+static void             UpdateSettings();
+static int              UpdateWindowManualResize(ImGuiWindow* window, int* border_hovered, int* border_held, int resize_grip_count, ImU32 resize_grip_col[4], const ImRect& visibility_rect);
+static void             RenderWindowOuterBorders(ImGuiWindow* window);
+static void             RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar_rect, bool title_bar_is_highlight, bool handle_borders_and_resize_grips, int resize_grip_count, const ImU32 resize_grip_col[4], float resize_grip_draw_size);
+static void             RenderWindowTitleBarContents(ImGuiWindow* window, const ImRect& title_bar_rect, const char* name, bool* p_open);
+static void             RenderDimmedBackgroundBehindWindow(ImGuiWindow* window, ImU32 col);
+static void             RenderDimmedBackgrounds();
+static void             SetLastItemDataForWindow(ImGuiWindow* window, const ImRect& rect);
+static void             SetLastItemDataForChildWindowItem(ImGuiWindow* window, const ImRect& rect);
+
+// Viewports
+const ImGuiID           IMGUI_VIEWPORT_DEFAULT_ID = 0x11111111; // Using an arbitrary constant instead of e.g. ImHashStr("ViewportDefault", 0); so it's easier to spot in the debugger. The exact value doesn't matter.
+static void             UpdateViewportsNewFrame();
+
+}
+
+//-----------------------------------------------------------------------------
+// [SECTION] CONTEXT AND MEMORY ALLOCATORS
+//-----------------------------------------------------------------------------
+
+// DLL users:
+// - Heaps and globals are not shared across DLL boundaries!
+// - You will need to call SetCurrentContext() + SetAllocatorFunctions() for each static/DLL boundary you are calling from.
+// - Same applies for hot-reloading mechanisms that are reliant on reloading DLL (note that many hot-reloading mechanisms work without DLL).
+// - Using Dear ImGui via a shared library is not recommended, because of function call overhead and because we don't guarantee backward nor forward ABI compatibility.
+// - Confused? In a debugger: add GImGui to your watch window and notice how its value changes depending on your current location (which DLL boundary you are in).
+
+// Current context pointer. Implicitly used by all Dear ImGui functions. Always assumed to be != NULL.
+// - ImGui::CreateContext() will automatically set this pointer if it is NULL.
+//   Change to a different context by calling ImGui::SetCurrentContext().
+// - Important: Dear ImGui functions are not thread-safe because of this pointer.
+//   If you want thread-safety to allow N threads to access N different contexts:
+//   - Change this variable to use thread local storage so each thread can refer to a different context, in your imconfig.h:
+//         struct ImGuiContext;
+//         extern thread_local ImGuiContext* MyImGuiTLS;
+//         #define GImGui MyImGuiTLS
+//     And then define MyImGuiTLS in one of your cpp files. Note that thread_local is a C++11 keyword, earlier C++ uses compiler-specific keyword.
+//   - Future development aims to make this context pointer explicit to all calls. Also read https://github.com/ocornut/imgui/issues/586
+//   - If you need a finite number of contexts, you may compile and use multiple instances of the ImGui code from a different namespace.
+// - DLL users: read comments above.
+#ifndef GImGui
+ImGuiContext*   GImGui = NULL;
+#endif
+
+// Memory Allocator functions. Use SetAllocatorFunctions() to change them.
+// - You probably don't want to modify that mid-program, and if you use global/static e.g. ImVector<> instances you may need to keep them accessible during program destruction.
+// - DLL users: read comments above.
+#ifndef IMGUI_DISABLE_DEFAULT_ALLOCATORS
+static void*   MallocWrapper(size_t size, void* user_data)    { IM_UNUSED(user_data); return malloc(size); }
+static void    FreeWrapper(void* ptr, void* user_data)        { IM_UNUSED(user_data); free(ptr); }
+#else
+static void*   MallocWrapper(size_t size, void* user_data)    { IM_UNUSED(user_data); IM_UNUSED(size); IM_ASSERT(0); return NULL; }
+static void    FreeWrapper(void* ptr, void* user_data)        { IM_UNUSED(user_data); IM_UNUSED(ptr); IM_ASSERT(0); }
+#endif
+static ImGuiMemAllocFunc    GImAllocatorAllocFunc = MallocWrapper;
+static ImGuiMemFreeFunc     GImAllocatorFreeFunc = FreeWrapper;
+static void*                GImAllocatorUserData = NULL;
+
+//-----------------------------------------------------------------------------
+// [SECTION] USER FACING STRUCTURES (ImGuiStyle, ImGuiIO, ImGuiPlatformIO)
+//-----------------------------------------------------------------------------
+
+ImGuiStyle::ImGuiStyle()
+{
+    FontSizeBase                = 0.0f;             // Will default to io.Fonts->Fonts[0] on first frame.
+    FontScaleMain               = 1.0f;             // Main scale factor. May be set by application once, or exposed to end-user.
+    FontScaleDpi                = 1.0f;             // Additional scale factor from viewport/monitor contents scale. When io.ConfigDpiScaleFonts is enabled, this is automatically overwritten when changing monitor DPI.
+
+    Alpha                       = 1.0f;             // Global alpha applies to everything in Dear ImGui.
+    DisabledAlpha               = 0.60f;            // Additional alpha multiplier applied by BeginDisabled(). Multiply over current value of Alpha.
+    WindowPadding               = ImVec2(8,8);      // Padding within a window
+    WindowRounding              = 0.0f;             // Radius of window corners rounding. Set to 0.0f to have rectangular windows. Large values tend to lead to variety of artifacts and are not recommended.
+    WindowBorderSize            = 1.0f;             // Thickness of border around windows. Generally set to 0.0f or 1.0f. Other values not well tested.
+    WindowBorderHoverPadding    = 4.0f;             // Hit-testing extent outside/inside resizing border. Also extend determination of hovered window. Generally meaningfully larger than WindowBorderSize to make it easy to reach borders.
+    WindowMinSize               = ImVec2(32,32);    // Minimum window size
+    WindowTitleAlign            = ImVec2(0.0f,0.5f);// Alignment for title bar text
+    WindowMenuButtonPosition    = ImGuiDir_Left;    // Position of the collapsing/docking button in the title bar (left/right). Defaults to ImGuiDir_Left.
+    ChildRounding               = 0.0f;             // Radius of child window corners rounding. Set to 0.0f to have rectangular child windows
+    ChildBorderSize             = 1.0f;             // Thickness of border around child windows. Generally set to 0.0f or 1.0f. Other values not well tested.
+    PopupRounding               = 0.0f;             // Radius of popup window corners rounding. Set to 0.0f to have rectangular child windows
+    PopupBorderSize             = 1.0f;             // Thickness of border around popup or tooltip windows. Generally set to 0.0f or 1.0f. Other values not well tested.
+    FramePadding                = ImVec2(4,3);      // Padding within a framed rectangle (used by most widgets)
+    FrameRounding               = 0.0f;             // Radius of frame corners rounding. Set to 0.0f to have rectangular frames (used by most widgets).
+    FrameBorderSize             = 0.0f;             // Thickness of border around frames. Generally set to 0.0f or 1.0f. Other values not well tested.
+    ItemSpacing                 = ImVec2(8,4);      // Horizontal and vertical spacing between widgets/lines
+    ItemInnerSpacing            = ImVec2(4,4);      // Horizontal and vertical spacing between within elements of a composed widget (e.g. a slider and its label)
+    CellPadding                 = ImVec2(4,2);      // Padding within a table cell. Cellpadding.x is locked for entire table. CellPadding.y may be altered between different rows.
+    TouchExtraPadding           = ImVec2(0,0);      // Expand reactive bounding box for touch-based system where touch position is not accurate enough. Unfortunately we don't sort widgets so priority on overlap will always be given to the first widget. So don't grow this too much!
+    IndentSpacing               = 21.0f;            // Horizontal spacing when e.g. entering a tree node. Generally == (FontSize + FramePadding.x*2).
+    ColumnsMinSpacing           = 6.0f;             // Minimum horizontal spacing between two columns. Preferably > (FramePadding.x + 1).
+    ScrollbarSize               = 14.0f;            // Width of the vertical scrollbar, Height of the horizontal scrollbar
+    ScrollbarRounding           = 9.0f;             // Radius of grab corners rounding for scrollbar
+    ScrollbarPadding            = 2.0f;             // Padding of scrollbar grab within its frame (same for both axises)
+    GrabMinSize                 = 12.0f;            // Minimum width/height of a grab box for slider/scrollbar
+    GrabRounding                = 0.0f;             // Radius of grabs corners rounding. Set to 0.0f to have rectangular slider grabs.
+    LogSliderDeadzone           = 4.0f;             // The size in pixels of the dead-zone around zero on logarithmic sliders that cross zero.
+    ImageRounding               = 0.0f;             // Rounding of Image() calls.
+    ImageBorderSize             = 0.0f;             // Thickness of border around tabs.
+    TabRounding                 = 5.0f;             // Radius of upper corners of a tab. Set to 0.0f to have rectangular tabs.
+    TabBorderSize               = 0.0f;             // Thickness of border around tabs.
+    TabMinWidthBase             = 1.0f;             // Minimum tab width, to make tabs larger than their contents. TabBar buttons are not affected.
+    TabMinWidthShrink           = 80.0f;            // Minimum tab width after shrinking, when using ImGuiTabBarFlags_FittingPolicyMixed policy.
+    TabCloseButtonMinWidthSelected   = -1.0f;       // -1: always visible. 0.0f: visible when hovered. >0.0f: visible when hovered if minimum width.
+    TabCloseButtonMinWidthUnselected = 0.0f;        // -1: always visible. 0.0f: visible when hovered. >0.0f: visible when hovered if minimum width. FLT_MAX: never show close button when unselected.
+    TabBarBorderSize            = 1.0f;             // Thickness of tab-bar separator, which takes on the tab active color to denote focus.
+    TabBarOverlineSize          = 1.0f;             // Thickness of tab-bar overline, which highlights the selected tab-bar.
+    TableAngledHeadersAngle     = 35.0f * (IM_PI / 180.0f); // Angle of angled headers (supported values range from -50 degrees to +50 degrees).
+    TableAngledHeadersTextAlign = ImVec2(0.5f,0.0f);// Alignment of angled headers within the cell
+    TreeLinesFlags              = ImGuiTreeNodeFlags_DrawLinesNone;
+    TreeLinesSize               = 1.0f;             // Thickness of outlines when using ImGuiTreeNodeFlags_DrawLines.
+    TreeLinesRounding           = 0.0f;             // Radius of lines connecting child nodes to the vertical line.
+    DragDropTargetRounding      = 0.0f;             // Radius of the drag and drop target frame.
+    DragDropTargetBorderSize    = 2.0f;             // Thickness of the drag and drop target border.
+    DragDropTargetPadding       = 3.0f;             // Size to expand the drag and drop target from actual target item size.
+    ColorMarkerSize             = 3.0f;             // Size of R/G/B/A color markers for ColorEdit4() and for Drags/Sliders when using ImGuiSliderFlags_ColorMarkers.
+    ColorButtonPosition         = ImGuiDir_Right;   // Side of the color button in the ColorEdit4 widget (left/right). Defaults to ImGuiDir_Right.
+    ButtonTextAlign             = ImVec2(0.5f,0.5f);// Alignment of button text when button is larger than text.
+    SelectableTextAlign         = ImVec2(0.0f,0.0f);// Alignment of selectable text. Defaults to (0.0f, 0.0f) (top-left aligned). It's generally important to keep this left-aligned if you want to lay multiple items on a same line.
+    SeparatorTextBorderSize     = 3.0f;             // Thickness of border in SeparatorText()
+    SeparatorTextAlign          = ImVec2(0.0f,0.5f);// Alignment of text within the separator. Defaults to (0.0f, 0.5f) (left aligned, center).
+    SeparatorTextPadding        = ImVec2(20.0f,3.f);// Horizontal offset of text from each edge of the separator + spacing on other axis. Generally small values. .y is recommended to be == FramePadding.y.
+    DisplayWindowPadding        = ImVec2(19,19);    // Window position are clamped to be visible within the display area or monitors by at least this amount. Only applies to regular windows.
+    DisplaySafeAreaPadding      = ImVec2(3,3);      // If you cannot see the edge of your screen (e.g. on a TV) increase the safe area padding. Covers popups/tooltips as well regular windows.
+    MouseCursorScale            = 1.0f;             // Scale software rendered mouse cursor (when io.MouseDrawCursor is enabled). May be removed later.
+    AntiAliasedLines            = true;             // Enable anti-aliased lines/borders. Disable if you are really tight on CPU/GPU.
+    AntiAliasedLinesUseTex      = true;             // Enable anti-aliased lines/borders using textures where possible. Require backend to render with bilinear filtering (NOT point/nearest filtering).
+    AntiAliasedFill             = true;             // Enable anti-aliased filled shapes (rounded rectangles, circles, etc.).
+    CurveTessellationTol        = 1.25f;            // Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.
+    CircleTessellationMaxError  = 0.30f;            // Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.
+
+    // Behaviors
+    HoverStationaryDelay        = 0.15f;            // Delay for IsItemHovered(ImGuiHoveredFlags_Stationary). Time required to consider mouse stationary.
+    HoverDelayShort             = 0.15f;            // Delay for IsItemHovered(ImGuiHoveredFlags_DelayShort). Usually used along with HoverStationaryDelay.
+    HoverDelayNormal            = 0.40f;            // Delay for IsItemHovered(ImGuiHoveredFlags_DelayNormal). "
+    HoverFlagsForTooltipMouse   = ImGuiHoveredFlags_Stationary | ImGuiHoveredFlags_DelayShort | ImGuiHoveredFlags_AllowWhenDisabled;    // Default flags when using IsItemHovered(ImGuiHoveredFlags_ForTooltip) or BeginItemTooltip()/SetItemTooltip() while using mouse.
+    HoverFlagsForTooltipNav     = ImGuiHoveredFlags_NoSharedDelay | ImGuiHoveredFlags_DelayNormal | ImGuiHoveredFlags_AllowWhenDisabled;  // Default flags when using IsItemHovered(ImGuiHoveredFlags_ForTooltip) or BeginItemTooltip()/SetItemTooltip() while using keyboard/gamepad.
+
+    // [Internal]
+    _MainScale                  = 1.0f;
+    _NextFrameFontSizeBase      = 0.0f;
+
+    // Default theme
+    ImGui::StyleColorsDark(this);
+}
+
+
+static inline void AddRootWindowToDrawData(ImGuiWindow* window)
+{
+    AddWindowToDrawData(window, GetWindowDisplayLayer(window));
+}
+
+static inline void LogTextV(ImGuiContext& g, const char* fmt, va_list args)
+{
+    if (g.LogFile)
+    {
+        g.LogBuffer.Buf.resize(0);
+        g.LogBuffer.appendfv(fmt, args);
+        ImFileWrite(g.LogBuffer.c_str(), sizeof(char), (ImU64)g.LogBuffer.size(), g.LogFile);
+    }
+    else
+    {
+        g.LogBuffer.appendfv(fmt, args);
+    }
+}
+
+static inline void SafeRelease(T*& res)
+{
+    if (res)
+        res->Release();
+    res = nullptr;
+}
+
 // --- 5. STATIC SYMBOL MAPPING ---
 // (今回は処理をスキップ。手動リネームが必要な場合に備えてセクションのみ残す)
 
-/* ==============================================================================
-[IMPLEMENTATION SECTION] - 以下の各セクションはAIが順次処理
-==============================================================================
-*/
 // === [SECTION: imgui.cpp] ===
+
 
 
 // dear imgui, v1.92.6 WIP
@@ -1524,184 +2000,6 @@ static void             NavUpdateCancelRequest();
 static void             NavUpdateCreateMoveRequest();
 static void             NavUpdateCreateTabbingRequest();
 static float            NavUpdatePageUpPageDown();
-static inline void      NavUpdateAnyRequestFlag();
-static void             NavUpdateCreateWrappingRequest();
-static void             NavEndFrame();
-static bool             NavScoreItem(ImGuiNavItemData* result, const ImRect& nav_bb);
-static void             NavApplyItemToResult(ImGuiNavItemData* result);
-static void             NavProcessItem();
-static void             NavProcessItemForTabbingRequest(ImGuiID id, ImGuiItemFlags item_flags, ImGuiNavMoveFlags move_flags);
-static ImGuiInputSource NavCalcPreferredRefPosSource(ImGuiWindowFlags window_type);
-static ImVec2           NavCalcPreferredRefPos(ImGuiWindowFlags window_type);
-static void             NavSaveLastChildNavWindowIntoParent(ImGuiWindow* nav_window);
-static ImGuiWindow*     NavRestoreLastChildNavWindow(ImGuiWindow* window);
-static void             NavRestoreLayer(ImGuiNavLayer layer);
-
-// Error Checking and Debug Tools
-static void             ErrorCheckNewFrameSanityChecks();
-static void             ErrorCheckEndFrameSanityChecks();
-#ifndef IMGUI_DISABLE_DEBUG_TOOLS
-static void             UpdateDebugToolItemPicker();
-static void             UpdateDebugToolItemPathQuery();
-static void             UpdateDebugToolFlashStyleColor();
-#endif
-
-// Inputs
-static void             UpdateKeyboardInputs();
-static void             UpdateMouseInputs();
-static void             UpdateMouseWheel();
-static void             UpdateKeyRoutingTable(ImGuiKeyRoutingTable* rt);
-
-// Misc
-static void             UpdateFontsNewFrame();
-static void             UpdateFontsEndFrame();
-static void             UpdateTexturesNewFrame();
-static void             UpdateTexturesEndFrame();
-static void             UpdateSettings();
-static int              UpdateWindowManualResize(ImGuiWindow* window, int* border_hovered, int* border_held, int resize_grip_count, ImU32 resize_grip_col[4], const ImRect& visibility_rect);
-static void             RenderWindowOuterBorders(ImGuiWindow* window);
-static void             RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar_rect, bool title_bar_is_highlight, bool handle_borders_and_resize_grips, int resize_grip_count, const ImU32 resize_grip_col[4], float resize_grip_draw_size);
-static void             RenderWindowTitleBarContents(ImGuiWindow* window, const ImRect& title_bar_rect, const char* name, bool* p_open);
-static void             RenderDimmedBackgroundBehindWindow(ImGuiWindow* window, ImU32 col);
-static void             RenderDimmedBackgrounds();
-static void             SetLastItemDataForWindow(ImGuiWindow* window, const ImRect& rect);
-static void             SetLastItemDataForChildWindowItem(ImGuiWindow* window, const ImRect& rect);
-
-// Viewports
-const ImGuiID           IMGUI_VIEWPORT_DEFAULT_ID = 0x11111111; // Using an arbitrary constant instead of e.g. ImHashStr("ViewportDefault", 0); so it's easier to spot in the debugger. The exact value doesn't matter.
-static void             UpdateViewportsNewFrame();
-
-}
-
-//-----------------------------------------------------------------------------
-// [SECTION] CONTEXT AND MEMORY ALLOCATORS
-//-----------------------------------------------------------------------------
-
-// DLL users:
-// - Heaps and globals are not shared across DLL boundaries!
-// - You will need to call SetCurrentContext() + SetAllocatorFunctions() for each static/DLL boundary you are calling from.
-// - Same applies for hot-reloading mechanisms that are reliant on reloading DLL (note that many hot-reloading mechanisms work without DLL).
-// - Using Dear ImGui via a shared library is not recommended, because of function call overhead and because we don't guarantee backward nor forward ABI compatibility.
-// - Confused? In a debugger: add GImGui to your watch window and notice how its value changes depending on your current location (which DLL boundary you are in).
-
-// Current context pointer. Implicitly used by all Dear ImGui functions. Always assumed to be != NULL.
-// - ImGui::CreateContext() will automatically set this pointer if it is NULL.
-//   Change to a different context by calling ImGui::SetCurrentContext().
-// - Important: Dear ImGui functions are not thread-safe because of this pointer.
-//   If you want thread-safety to allow N threads to access N different contexts:
-//   - Change this variable to use thread local storage so each thread can refer to a different context, in your imconfig.h:
-//         struct ImGuiContext;
-//         extern thread_local ImGuiContext* MyImGuiTLS;
-//         #define GImGui MyImGuiTLS
-//     And then define MyImGuiTLS in one of your cpp files. Note that thread_local is a C++11 keyword, earlier C++ uses compiler-specific keyword.
-//   - Future development aims to make this context pointer explicit to all calls. Also read https://github.com/ocornut/imgui/issues/586
-//   - If you need a finite number of contexts, you may compile and use multiple instances of the ImGui code from a different namespace.
-// - DLL users: read comments above.
-#ifndef GImGui
-ImGuiContext*   GImGui = NULL;
-#endif
-
-// Memory Allocator functions. Use SetAllocatorFunctions() to change them.
-// - You probably don't want to modify that mid-program, and if you use global/static e.g. ImVector<> instances you may need to keep them accessible during program destruction.
-// - DLL users: read comments above.
-#ifndef IMGUI_DISABLE_DEFAULT_ALLOCATORS
-static void*   MallocWrapper(size_t size, void* user_data)    { IM_UNUSED(user_data); return malloc(size); }
-static void    FreeWrapper(void* ptr, void* user_data)        { IM_UNUSED(user_data); free(ptr); }
-#else
-static void*   MallocWrapper(size_t size, void* user_data)    { IM_UNUSED(user_data); IM_UNUSED(size); IM_ASSERT(0); return NULL; }
-static void    FreeWrapper(void* ptr, void* user_data)        { IM_UNUSED(user_data); IM_UNUSED(ptr); IM_ASSERT(0); }
-#endif
-static ImGuiMemAllocFunc    GImAllocatorAllocFunc = MallocWrapper;
-static ImGuiMemFreeFunc     GImAllocatorFreeFunc = FreeWrapper;
-static void*                GImAllocatorUserData = NULL;
-
-//-----------------------------------------------------------------------------
-// [SECTION] USER FACING STRUCTURES (ImGuiStyle, ImGuiIO, ImGuiPlatformIO)
-//-----------------------------------------------------------------------------
-
-ImGuiStyle::ImGuiStyle()
-{
-    FontSizeBase                = 0.0f;             // Will default to io.Fonts->Fonts[0] on first frame.
-    FontScaleMain               = 1.0f;             // Main scale factor. May be set by application once, or exposed to end-user.
-    FontScaleDpi                = 1.0f;             // Additional scale factor from viewport/monitor contents scale. When io.ConfigDpiScaleFonts is enabled, this is automatically overwritten when changing monitor DPI.
-
-    Alpha                       = 1.0f;             // Global alpha applies to everything in Dear ImGui.
-    DisabledAlpha               = 0.60f;            // Additional alpha multiplier applied by BeginDisabled(). Multiply over current value of Alpha.
-    WindowPadding               = ImVec2(8,8);      // Padding within a window
-    WindowRounding              = 0.0f;             // Radius of window corners rounding. Set to 0.0f to have rectangular windows. Large values tend to lead to variety of artifacts and are not recommended.
-    WindowBorderSize            = 1.0f;             // Thickness of border around windows. Generally set to 0.0f or 1.0f. Other values not well tested.
-    WindowBorderHoverPadding    = 4.0f;             // Hit-testing extent outside/inside resizing border. Also extend determination of hovered window. Generally meaningfully larger than WindowBorderSize to make it easy to reach borders.
-    WindowMinSize               = ImVec2(32,32);    // Minimum window size
-    WindowTitleAlign            = ImVec2(0.0f,0.5f);// Alignment for title bar text
-    WindowMenuButtonPosition    = ImGuiDir_Left;    // Position of the collapsing/docking button in the title bar (left/right). Defaults to ImGuiDir_Left.
-    ChildRounding               = 0.0f;             // Radius of child window corners rounding. Set to 0.0f to have rectangular child windows
-    ChildBorderSize             = 1.0f;             // Thickness of border around child windows. Generally set to 0.0f or 1.0f. Other values not well tested.
-    PopupRounding               = 0.0f;             // Radius of popup window corners rounding. Set to 0.0f to have rectangular child windows
-    PopupBorderSize             = 1.0f;             // Thickness of border around popup or tooltip windows. Generally set to 0.0f or 1.0f. Other values not well tested.
-    FramePadding                = ImVec2(4,3);      // Padding within a framed rectangle (used by most widgets)
-    FrameRounding               = 0.0f;             // Radius of frame corners rounding. Set to 0.0f to have rectangular frames (used by most widgets).
-    FrameBorderSize             = 0.0f;             // Thickness of border around frames. Generally set to 0.0f or 1.0f. Other values not well tested.
-    ItemSpacing                 = ImVec2(8,4);      // Horizontal and vertical spacing between widgets/lines
-    ItemInnerSpacing            = ImVec2(4,4);      // Horizontal and vertical spacing between within elements of a composed widget (e.g. a slider and its label)
-    CellPadding                 = ImVec2(4,2);      // Padding within a table cell. Cellpadding.x is locked for entire table. CellPadding.y may be altered between different rows.
-    TouchExtraPadding           = ImVec2(0,0);      // Expand reactive bounding box for touch-based system where touch position is not accurate enough. Unfortunately we don't sort widgets so priority on overlap will always be given to the first widget. So don't grow this too much!
-    IndentSpacing               = 21.0f;            // Horizontal spacing when e.g. entering a tree node. Generally == (FontSize + FramePadding.x*2).
-    ColumnsMinSpacing           = 6.0f;             // Minimum horizontal spacing between two columns. Preferably > (FramePadding.x + 1).
-    ScrollbarSize               = 14.0f;            // Width of the vertical scrollbar, Height of the horizontal scrollbar
-    ScrollbarRounding           = 9.0f;             // Radius of grab corners rounding for scrollbar
-    ScrollbarPadding            = 2.0f;             // Padding of scrollbar grab within its frame (same for both axises)
-    GrabMinSize                 = 12.0f;            // Minimum width/height of a grab box for slider/scrollbar
-    GrabRounding                = 0.0f;             // Radius of grabs corners rounding. Set to 0.0f to have rectangular slider grabs.
-    LogSliderDeadzone           = 4.0f;             // The size in pixels of the dead-zone around zero on logarithmic sliders that cross zero.
-    ImageRounding               = 0.0f;             // Rounding of Image() calls.
-    ImageBorderSize             = 0.0f;             // Thickness of border around tabs.
-    TabRounding                 = 5.0f;             // Radius of upper corners of a tab. Set to 0.0f to have rectangular tabs.
-    TabBorderSize               = 0.0f;             // Thickness of border around tabs.
-    TabMinWidthBase             = 1.0f;             // Minimum tab width, to make tabs larger than their contents. TabBar buttons are not affected.
-    TabMinWidthShrink           = 80.0f;            // Minimum tab width after shrinking, when using ImGuiTabBarFlags_FittingPolicyMixed policy.
-    TabCloseButtonMinWidthSelected   = -1.0f;       // -1: always visible. 0.0f: visible when hovered. >0.0f: visible when hovered if minimum width.
-    TabCloseButtonMinWidthUnselected = 0.0f;        // -1: always visible. 0.0f: visible when hovered. >0.0f: visible when hovered if minimum width. FLT_MAX: never show close button when unselected.
-    TabBarBorderSize            = 1.0f;             // Thickness of tab-bar separator, which takes on the tab active color to denote focus.
-    TabBarOverlineSize          = 1.0f;             // Thickness of tab-bar overline, which highlights the selected tab-bar.
-    TableAngledHeadersAngle     = 35.0f * (IM_PI / 180.0f); // Angle of angled headers (supported values range from -50 degrees to +50 degrees).
-    TableAngledHeadersTextAlign = ImVec2(0.5f,0.0f);// Alignment of angled headers within the cell
-    TreeLinesFlags              = ImGuiTreeNodeFlags_DrawLinesNone;
-    TreeLinesSize               = 1.0f;             // Thickness of outlines when using ImGuiTreeNodeFlags_DrawLines.
-    TreeLinesRounding           = 0.0f;             // Radius of lines connecting child nodes to the vertical line.
-    DragDropTargetRounding      = 0.0f;             // Radius of the drag and drop target frame.
-    DragDropTargetBorderSize    = 2.0f;             // Thickness of the drag and drop target border.
-    DragDropTargetPadding       = 3.0f;             // Size to expand the drag and drop target from actual target item size.
-    ColorMarkerSize             = 3.0f;             // Size of R/G/B/A color markers for ColorEdit4() and for Drags/Sliders when using ImGuiSliderFlags_ColorMarkers.
-    ColorButtonPosition         = ImGuiDir_Right;   // Side of the color button in the ColorEdit4 widget (left/right). Defaults to ImGuiDir_Right.
-    ButtonTextAlign             = ImVec2(0.5f,0.5f);// Alignment of button text when button is larger than text.
-    SelectableTextAlign         = ImVec2(0.0f,0.0f);// Alignment of selectable text. Defaults to (0.0f, 0.0f) (top-left aligned). It's generally important to keep this left-aligned if you want to lay multiple items on a same line.
-    SeparatorTextBorderSize     = 3.0f;             // Thickness of border in SeparatorText()
-    SeparatorTextAlign          = ImVec2(0.0f,0.5f);// Alignment of text within the separator. Defaults to (0.0f, 0.5f) (left aligned, center).
-    SeparatorTextPadding        = ImVec2(20.0f,3.f);// Horizontal offset of text from each edge of the separator + spacing on other axis. Generally small values. .y is recommended to be == FramePadding.y.
-    DisplayWindowPadding        = ImVec2(19,19);    // Window position are clamped to be visible within the display area or monitors by at least this amount. Only applies to regular windows.
-    DisplaySafeAreaPadding      = ImVec2(3,3);      // If you cannot see the edge of your screen (e.g. on a TV) increase the safe area padding. Covers popups/tooltips as well regular windows.
-    MouseCursorScale            = 1.0f;             // Scale software rendered mouse cursor (when io.MouseDrawCursor is enabled). May be removed later.
-    AntiAliasedLines            = true;             // Enable anti-aliased lines/borders. Disable if you are really tight on CPU/GPU.
-    AntiAliasedLinesUseTex      = true;             // Enable anti-aliased lines/borders using textures where possible. Require backend to render with bilinear filtering (NOT point/nearest filtering).
-    AntiAliasedFill             = true;             // Enable anti-aliased filled shapes (rounded rectangles, circles, etc.).
-    CurveTessellationTol        = 1.25f;            // Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.
-    CircleTessellationMaxError  = 0.30f;            // Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.
-
-    // Behaviors
-    HoverStationaryDelay        = 0.15f;            // Delay for IsItemHovered(ImGuiHoveredFlags_Stationary). Time required to consider mouse stationary.
-    HoverDelayShort             = 0.15f;            // Delay for IsItemHovered(ImGuiHoveredFlags_DelayShort). Usually used along with HoverStationaryDelay.
-    HoverDelayNormal            = 0.40f;            // Delay for IsItemHovered(ImGuiHoveredFlags_DelayNormal). "
-    HoverFlagsForTooltipMouse   = ImGuiHoveredFlags_Stationary | ImGuiHoveredFlags_DelayShort | ImGuiHoveredFlags_AllowWhenDisabled;    // Default flags when using IsItemHovered(ImGuiHoveredFlags_ForTooltip) or BeginItemTooltip()/SetItemTooltip() while using mouse.
-    HoverFlagsForTooltipNav     = ImGuiHoveredFlags_NoSharedDelay | ImGuiHoveredFlags_DelayNormal | ImGuiHoveredFlags_AllowWhenDisabled;  // Default flags when using IsItemHovered(ImGuiHoveredFlags_ForTooltip) or BeginItemTooltip()/SetItemTooltip() while using keyboard/gamepad.
-
-    // [Internal]
-    _MainScale                  = 1.0f;
-    _NextFrameFontSizeBase      = 0.0f;
-
-    // Default theme
-    ImGui::StyleColorsDark(this);
-}
-
 
 // Scale all spacing/padding/thickness values. Do not scale fonts.
 // Important: This operation is lossy because we round all sizes to integer. If you need to change your scale multiples, call this over a freshly initialized ImGuiStyle structure rather than scaling multiple times.
@@ -2809,40 +3107,6 @@ int ImTextCountCharsFromUtf8(const char* in_text, const char* in_text_end)
 }
 
 // Based on stb_to_utf8() from github.com/nothings/stb/
-static inline int ImTextCharToUtf8_inline(char* buf, int buf_size, unsigned int c)
-{
-    if (c < 0x80)
-    {
-        buf[0] = (char)c;
-        return 1;
-    }
-    if (c < 0x800)
-    {
-        if (buf_size < 2) return 0;
-        buf[0] = (char)(0xc0 + (c >> 6));
-        buf[1] = (char)(0x80 + (c & 0x3f));
-        return 2;
-    }
-    if (c < 0x10000)
-    {
-        if (buf_size < 3) return 0;
-        buf[0] = (char)(0xe0 + (c >> 12));
-        buf[1] = (char)(0x80 + ((c >> 6) & 0x3f));
-        buf[2] = (char)(0x80 + ((c ) & 0x3f));
-        return 3;
-    }
-    if (c <= 0x10FFFF)
-    {
-        if (buf_size < 4) return 0;
-        buf[0] = (char)(0xf0 + (c >> 18));
-        buf[1] = (char)(0x80 + ((c >> 12) & 0x3f));
-        buf[2] = (char)(0x80 + ((c >> 6) & 0x3f));
-        buf[3] = (char)(0x80 + ((c ) & 0x3f));
-        return 4;
-    }
-    // Invalid code point, the max unicode is 0x10FFFF
-    return 0;
-}
 
 int ImTextCharToUtf8(char out_buf[5], unsigned int c)
 {
@@ -2856,15 +3120,6 @@ int ImTextCountUtf8BytesFromChar(const char* in_text, const char* in_text_end)
 {
     unsigned int unused = 0;
     return ImTextCharFromUtf8(&unused, in_text, in_text_end);
-}
-
-static inline int ImTextCountUtf8BytesFromChar(unsigned int c)
-{
-    if (c < 0x80) return 1;
-    if (c < 0x800) return 2;
-    if (c < 0x10000) return 3;
-    if (c <= 0x10FFFF) return 4;
-    return 3;
 }
 
 int ImTextStrToUtf8(char* out_buf, int out_buf_size, const ImWchar* in_text, const ImWchar* in_text_end)
@@ -4945,16 +5200,6 @@ bool ImGui::IsWindowContentHoverable(ImGuiWindow* window, ImGuiHoveredFlags flag
     return true;
 }
 
-static inline float CalcDelayFromHoveredFlags(ImGuiHoveredFlags flags)
-{
-    ImGuiContext& g = *GImGui;
-    if (flags & ImGuiHoveredFlags_DelayNormal)
-        return g.Style.HoverDelayNormal;
-    if (flags & ImGuiHoveredFlags_DelayShort)
-        return g.Style.HoverDelayShort;
-    return 0.0f;
-}
-
 static ImGuiHoveredFlags ApplyHoverFlagsForTooltip(ImGuiHoveredFlags user_flags, ImGuiHoveredFlags shared_flags)
 {
     // Allow instance flags to override shared flags
@@ -5956,16 +6201,7 @@ static void AddWindowToDrawData(ImGuiWindow* window, int layer)
             AddWindowToDrawData(child, layer);
 }
 
-static inline int GetWindowDisplayLayer(ImGuiWindow* window)
-{
-    return (window->Flags & ImGuiWindowFlags_Tooltip) ? 1 : 0;
-}
-
 // Layer is locked for the root window, however child windows may use a different viewport (e.g. extruding menu)
-static inline void AddRootWindowToDrawData(ImGuiWindow* window)
-{
-    AddWindowToDrawData(window, GetWindowDisplayLayer(window));
-}
 
 static void FlattenDrawDataIntoSingleLayer(ImDrawDataBuilder* builder)
 {
@@ -6811,30 +7047,6 @@ static ImGuiWindow* CreateNewWindow(const char* name, ImGuiWindowFlags flags)
     return window;
 }
 
-static inline ImVec2 CalcWindowMinSize(ImGuiWindow* window)
-{
-    // We give windows non-zero minimum size to facilitate understanding problematic cases (e.g. empty popups)
-    // FIXME: Essentially we want to restrict manual resizing to WindowMinSize+Decoration, and allow api resizing to be smaller.
-    // Perhaps should tend further a neater test for this.
-    ImGuiContext& g = *GImGui;
-    ImVec2 size_min;
-    if ((window->Flags & ImGuiWindowFlags_ChildWindow) && !(window->Flags & ImGuiWindowFlags_Popup))
-    {
-        size_min.x = (window->ChildFlags & ImGuiChildFlags_ResizeX) ? g.Style.WindowMinSize.x : IMGUI_WINDOW_HARD_MIN_SIZE;
-        size_min.y = (window->ChildFlags & ImGuiChildFlags_ResizeY) ? g.Style.WindowMinSize.y : IMGUI_WINDOW_HARD_MIN_SIZE;
-    }
-    else
-    {
-        size_min.x = ((window->Flags & ImGuiWindowFlags_AlwaysAutoResize) == 0) ? g.Style.WindowMinSize.x : IMGUI_WINDOW_HARD_MIN_SIZE;
-        size_min.y = ((window->Flags & ImGuiWindowFlags_AlwaysAutoResize) == 0) ? g.Style.WindowMinSize.y : IMGUI_WINDOW_HARD_MIN_SIZE;
-    }
-
-    // Reduce artifacts with very small windows
-    ImGuiWindow* window_for_height = window;
-    size_min.y = ImMax(size_min.y, window_for_height->TitleBarHeight + window_for_height->MenuBarHeight + ImMax(0.0f, g.Style.WindowRounding - 1.0f));
-    return size_min;
-}
-
 static ImVec2 CalcWindowSizeAfterConstraint(ImGuiWindow* window, const ImVec2& size_desired)
 {
     ImGuiContext& g = *GImGui;
@@ -7237,14 +7449,6 @@ static int ImGui::UpdateWindowManualResize(ImGuiWindow* window, int* border_hove
         g.WindowResizeBorderExpectedRect = GetResizeBorderRect(window, *border_held, grip_hover_inner_size, g.WindowsBorderHoverPadding);
 
     return ret_auto_fit_mask;
-}
-
-static inline void ClampWindowPos(ImGuiWindow* window, const ImRect& visibility_rect)
-{
-    ImVec2 size_for_clamping = window->Size;
-    if (!(window->BgClickFlags & ImGuiWindowBgClickFlags_Move) && !(window->Flags & ImGuiWindowFlags_NoTitleBar))
-        size_for_clamping.y = window->TitleBarHeight;
-    window->Pos = ImClamp(window->Pos, visibility_rect.Min - size_for_clamping, visibility_rect.Max);
 }
 
 static void RenderWindowOuterSingleBorder(ImGuiWindow* window, int border_n, ImU32 border_col, float border_size)
@@ -9714,11 +9918,6 @@ static void ImGui::UpdateKeyRoutingTable(ImGuiKeyRoutingTable* rt)
 }
 
 // owner_id may be None/Any, but routing_id needs to be always be set, so we default to GetCurrentFocusScope().
-static inline ImGuiID GetRoutingIdFromOwnerId(ImGuiID owner_id)
-{
-    ImGuiContext& g = *GImGui;
-    return (owner_id != ImGuiKeyOwner_NoOwner && owner_id != ImGuiKeyOwner_Any) ? owner_id : g.CurrentFocusScopeId;
-}
 
 ImGuiKeyRoutingData* ImGui::GetShortcutRoutingData(ImGuiKeyChord key_chord)
 {
@@ -13708,14 +13907,6 @@ void ImGui::NavRestoreLayer(ImGuiNavLayer layer)
     }
 }
 
-static inline void ImGui::NavUpdateAnyRequestFlag()
-{
-    ImGuiContext& g = *GImGui;
-    g.NavAnyRequest = g.NavMoveScoringItems || g.NavInitRequest || (IMGUI_DEBUG_NAV_SCORING && g.NavWindow != NULL);
-    if (g.NavAnyRequest)
-        IM_ASSERT(g.NavWindow != NULL);
-}
-
 // This needs to be called before we submit any widget (aka in or before Begin)
 void ImGui::NavInitWindow(ImGuiWindow* window, bool force_reinit)
 {
@@ -15238,19 +15429,6 @@ void ImGui::EndDragDropTarget()
 //-----------------------------------------------------------------------------
 
 // Pass text data straight to log (without being displayed)
-static inline void LogTextV(ImGuiContext& g, const char* fmt, va_list args)
-{
-    if (g.LogFile)
-    {
-        g.LogBuffer.Buf.resize(0);
-        g.LogBuffer.appendfv(fmt, args);
-        ImFileWrite(g.LogBuffer.c_str(), sizeof(char), (ImU64)g.LogBuffer.size(), g.LogFile);
-    }
-    else
-    {
-        g.LogBuffer.appendfv(fmt, args);
-    }
-}
 
 void ImGui::LogText(const char* fmt, ...)
 {
@@ -18363,6 +18541,7 @@ void ImGui::ShowFontSelector(const char* label)
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: imgui_demo.cpp] ===
+
 
 
 // dear imgui, v1.92.6 WIP
@@ -29251,6 +29430,7 @@ bool ImGui::ShowStyleSelector(const char*) { return false; }
 // === [SECTION: imgui_draw.cpp] ===
 
 
+
 // dear imgui, v1.92.6 WIP
 // (drawing and font code)
 
@@ -30646,30 +30826,6 @@ void ImDrawList::PathBezierQuadraticCurveTo(const ImVec2& p2, const ImVec2& p3, 
         for (int i_step = 1; i_step <= num_segments; i_step++)
             _Path.push_back(ImBezierQuadraticCalc(p1, p2, p3, t_step * i_step));
     }
-}
-
-static inline ImDrawFlags FixRectCornerFlags(ImDrawFlags flags)
-{
-    /*
-    IM_STATIC_ASSERT(ImDrawFlags_RoundCornersTopLeft == (1 << 4));
-#ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
-    // Obsoleted in 1.82 (from February 2021). This code was stripped/simplified and mostly commented in 1.90 (from September 2023)
-    // - Legacy Support for hard coded ~0 (used to be a suggested equivalent to ImDrawCornerFlags_All)
-    if (flags == ~0)                    { return ImDrawFlags_RoundCornersAll; }
-    // - Legacy Support for hard coded 0x01 to 0x0F (matching 15 out of 16 old flags combinations). Read details in older version of this code.
-    if (flags >= 0x01 && flags <= 0x0F) { return (flags << 4); }
-    // We cannot support hard coded 0x00 with 'float rounding > 0.0f' --> replace with ImDrawFlags_RoundCornersNone or use 'float rounding = 0.0f'
-#endif
-    */
-    // If this assert triggers, please update your code replacing hardcoded values with new ImDrawFlags_RoundCorners* values.
-    // Note that ImDrawFlags_Closed (== 0x01) is an invalid flag for AddRect(), AddRectFilled(), PathRect() etc. anyway.
-    // See details in 1.82 Changelog as well as 2021/03/12 and 2023/09/08 entries in "API BREAKING CHANGES" section.
-    IM_ASSERT((flags & 0x0F) == 0 && "Misuse of legacy hardcoded ImDrawCornerFlags values!");
-
-    if ((flags & ImDrawFlags_RoundCornersMask_) == 0)
-        flags |= ImDrawFlags_RoundCornersAll;
-
-    return flags;
 }
 
 void ImDrawList::PathRect(const ImVec2& a, const ImVec2& b, float rounding, ImDrawFlags flags)
@@ -35232,14 +35388,6 @@ void ImGui::RenderArrowPointingAt(ImDrawList* draw_list, ImVec2 pos, ImVec2 half
     }
 }
 
-static inline float ImAcos01(float x)
-{
-    if (x <= 0.0f) return IM_PI * 0.5f;
-    if (x >= 1.0f) return 0.0f;
-    return ImAcos(x);
-    //return (-0.69813170079773212f * x * x - 0.87266462599716477f) * x + 1.5707963267948966f; // Cheap approximation, may be enough for what we do.
-}
-
 // FIXME: Cleanup and move code to ImDrawList.
 // - Before 2025-12-04: RenderRectFilledRangeH()   with 'float x_start_norm, float x_end_norm` <- normalized
 // - After  2025-12-04: RenderRectFilledInRangeH() with 'float x1, float x2'                   <- absolute coords!!
@@ -35999,6 +36147,7 @@ static const char* GetDefaultCompressedFontDataProggyVector(int* out_size)
 // === [SECTION: imgui_tables.cpp] ===
 
 
+
 // dear imgui, v1.92.6 WIP
 // (tables and columns code)
 
@@ -36264,38 +36413,6 @@ static const float TABLE_RESIZE_SEPARATOR_HALF_THICKNESS = 4.0f;    // Extend ou
 static const float TABLE_RESIZE_SEPARATOR_FEEDBACK_TIMER = 0.06f;   // Delay/timer before making the hover feedback (color+cursor) visible because tables/columns tends to be more cramped.
 
 // Helper
-inline ImGuiTableFlags TableFixFlags(ImGuiTableFlags flags, ImGuiWindow* outer_window)
-{
-    // Adjust flags: set default sizing policy
-    if ((flags & ImGuiTableFlags_SizingMask_) == 0)
-        flags |= ((flags & ImGuiTableFlags_ScrollX) || (outer_window->Flags & ImGuiWindowFlags_AlwaysAutoResize)) ? ImGuiTableFlags_SizingFixedFit : ImGuiTableFlags_SizingStretchSame;
-
-    // Adjust flags: enable NoKeepColumnsVisible when using ImGuiTableFlags_SizingFixedSame
-    if ((flags & ImGuiTableFlags_SizingMask_) == ImGuiTableFlags_SizingFixedSame)
-        flags |= ImGuiTableFlags_NoKeepColumnsVisible;
-
-    // Adjust flags: enforce borders when resizable
-    if (flags & ImGuiTableFlags_Resizable)
-        flags |= ImGuiTableFlags_BordersInnerV;
-
-    // Adjust flags: disable NoHostExtendX/NoHostExtendY if we have any scrolling going on
-    if (flags & (ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY))
-        flags &= ~(ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_NoHostExtendY);
-
-    // Adjust flags: NoBordersInBodyUntilResize takes priority over NoBordersInBody
-    if (flags & ImGuiTableFlags_NoBordersInBodyUntilResize)
-        flags &= ~ImGuiTableFlags_NoBordersInBody;
-
-    // Adjust flags: disable saved settings if there's nothing to save
-    if ((flags & (ImGuiTableFlags_Resizable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Sortable)) == 0)
-        flags |= ImGuiTableFlags_NoSavedSettings;
-
-    // Inherit _NoSavedSettings from top-level window (child windows always have _NoSavedSettings set)
-    if (outer_window->RootWindow->Flags & ImGuiWindowFlags_NoSavedSettings)
-        flags |= ImGuiTableFlags_NoSavedSettings;
-
-    return flags;
-}
 
 ImGuiTable* ImGui::TableFindByID(ImGuiID id)
 {
@@ -38900,12 +39017,6 @@ ImGuiTableSortSpecs* ImGui::TableGetSortSpecs()
     return &table->SortSpecs;
 }
 
-static inline ImGuiSortDirection TableGetColumnAvailSortDirection(ImGuiTableColumn* column, int n)
-{
-    IM_ASSERT(n < column->SortDirectionsAvailCount);
-    return (ImGuiSortDirection)((column->SortDirectionsAvailList >> (n << 1)) & 0x03);
-}
-
 // Fix sort direction if currently set on a value which is unavailable (e.g. activating NoSortAscending/NoSortDescending)
 void ImGui::TableFixColumnSortDirection(ImGuiTable* table, ImGuiTableColumn* column)
 {
@@ -40596,6 +40707,7 @@ void ImGui::Columns(int columns_count, const char* id, bool borders)
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: imgui_widgets.cpp] ===
+
 
 
 // dear imgui, v1.92.6 WIP
@@ -50144,11 +50256,6 @@ ImGuiTabBar::ImGuiTabBar()
     LastTabItemIdx = -1;
 }
 
-static inline int TabItemGetSectionIdx(const ImGuiTabItem* tab)
-{
-    return (tab->Flags & ImGuiTabItemFlags_Leading) ? 0 : (tab->Flags & ImGuiTabItemFlags_Trailing) ? 2 : 1;
-}
-
 static int IMGUI_CDECL TabItemComparerBySection(const void* lhs, const void* rhs)
 {
     const ImGuiTabItem* a = (const ImGuiTabItem*)lhs;
@@ -51405,6 +51512,7 @@ void ImGui::TabItemLabelAndCloseButton(ImDrawList* draw_list, const ImRect& bb, 
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_allegro5.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -52099,6 +52207,7 @@ void ImGui_ImplAllegro5_NewFrame()
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_android.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -52406,6 +52515,7 @@ void ImGui_ImplAndroid_NewFrame()
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_dx10.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -53065,6 +53175,7 @@ void ImGui_ImplDX10_NewFrame()
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_dx11.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -53745,6 +53856,7 @@ void ImGui_ImplDX11_NewFrame()
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_dx12.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -53941,12 +54053,6 @@ static void ImGui_ImplDX12_SetupRenderState(ImDrawData* draw_data, ID3D12Graphic
 }
 
 template<typename T>
-static inline void SafeRelease(T*& res)
-{
-    if (res)
-        res->Release();
-    res = nullptr;
-}
 
 // Render function
 void ImGui_ImplDX12_RenderDrawData(ImDrawData* draw_data, ID3D12GraphicsCommandList* command_list)
@@ -54717,6 +54823,7 @@ void ImGui_ImplDX12_NewFrame()
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_dx9.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -55197,6 +55304,7 @@ void ImGui_ImplDX9_NewFrame()
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_glfw.cpp] ===
+
 
 
 // dear imgui: Platform Backend for GLFW
@@ -56055,53 +56163,6 @@ static void ImGui_ImplGlfw_UpdateMouseCursor()
 }
 
 // Update gamepad inputs
-static inline float Saturate(float v) { return v < 0.0f ? 0.0f : v  > 1.0f ? 1.0f : v; }
-static void ImGui_ImplGlfw_UpdateGamepads()
-{
-    ImGuiIO& io = ImGui::GetIO();
-    if ((io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad) == 0) // FIXME: Technically feeding gamepad shouldn't depend on this now that they are regular inputs, but see #8075
-        return;
-
-    io.BackendFlags &= ~ImGuiBackendFlags_HasGamepad;
-#if GLFW_HAS_GAMEPAD_API && !defined(EMSCRIPTEN_USE_EMBEDDED_GLFW3)
-    GLFWgamepadstate gamepad;
-    if (!glfwGetGamepadState(GLFW_JOYSTICK_1, &gamepad))
-        return;
-#else
-    int axes_count = 0, buttons_count = 0;
-    const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axes_count);
-    const unsigned char* buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttons_count);
-    if (axes_count == 0 || buttons_count == 0)
-        return;
-#endif
-    io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
-    MAP_BUTTON(ImGuiKey_GamepadStart,       GLFW_GAMEPAD_BUTTON_START,          7);
-    MAP_BUTTON(ImGuiKey_GamepadBack,        GLFW_GAMEPAD_BUTTON_BACK,           6);
-    MAP_BUTTON(ImGuiKey_GamepadFaceLeft,    GLFW_GAMEPAD_BUTTON_X,              2);     // Xbox X, PS Square
-    MAP_BUTTON(ImGuiKey_GamepadFaceRight,   GLFW_GAMEPAD_BUTTON_B,              1);     // Xbox B, PS Circle
-    MAP_BUTTON(ImGuiKey_GamepadFaceUp,      GLFW_GAMEPAD_BUTTON_Y,              3);     // Xbox Y, PS Triangle
-    MAP_BUTTON(ImGuiKey_GamepadFaceDown,    GLFW_GAMEPAD_BUTTON_A,              0);     // Xbox A, PS Cross
-    MAP_BUTTON(ImGuiKey_GamepadDpadLeft,    GLFW_GAMEPAD_BUTTON_DPAD_LEFT,      13);
-    MAP_BUTTON(ImGuiKey_GamepadDpadRight,   GLFW_GAMEPAD_BUTTON_DPAD_RIGHT,     11);
-    MAP_BUTTON(ImGuiKey_GamepadDpadUp,      GLFW_GAMEPAD_BUTTON_DPAD_UP,        10);
-    MAP_BUTTON(ImGuiKey_GamepadDpadDown,    GLFW_GAMEPAD_BUTTON_DPAD_DOWN,      12);
-    MAP_BUTTON(ImGuiKey_GamepadL1,          GLFW_GAMEPAD_BUTTON_LEFT_BUMPER,    4);
-    MAP_BUTTON(ImGuiKey_GamepadR1,          GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER,   5);
-    MAP_ANALOG(ImGuiKey_GamepadL2,          GLFW_GAMEPAD_AXIS_LEFT_TRIGGER,     4,      -0.75f,  +1.0f);
-    MAP_ANALOG(ImGuiKey_GamepadR2,          GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER,    5,      -0.75f,  +1.0f);
-    MAP_BUTTON(ImGuiKey_GamepadL3,          GLFW_GAMEPAD_BUTTON_LEFT_THUMB,     8);
-    MAP_BUTTON(ImGuiKey_GamepadR3,          GLFW_GAMEPAD_BUTTON_RIGHT_THUMB,    9);
-    MAP_ANALOG(ImGuiKey_GamepadLStickLeft,  GLFW_GAMEPAD_AXIS_LEFT_X,           0,      -0.25f,  -1.0f);
-    MAP_ANALOG(ImGuiKey_GamepadLStickRight, GLFW_GAMEPAD_AXIS_LEFT_X,           0,      +0.25f,  +1.0f);
-    MAP_ANALOG(ImGuiKey_GamepadLStickUp,    GLFW_GAMEPAD_AXIS_LEFT_Y,           1,      -0.25f,  -1.0f);
-    MAP_ANALOG(ImGuiKey_GamepadLStickDown,  GLFW_GAMEPAD_AXIS_LEFT_Y,           1,      +0.25f,  +1.0f);
-    MAP_ANALOG(ImGuiKey_GamepadRStickLeft,  GLFW_GAMEPAD_AXIS_RIGHT_X,          2,      -0.25f,  -1.0f);
-    MAP_ANALOG(ImGuiKey_GamepadRStickRight, GLFW_GAMEPAD_AXIS_RIGHT_X,          2,      +0.25f,  +1.0f);
-    MAP_ANALOG(ImGuiKey_GamepadRStickUp,    GLFW_GAMEPAD_AXIS_RIGHT_Y,          3,      -0.25f,  -1.0f);
-    MAP_ANALOG(ImGuiKey_GamepadRStickDown,  GLFW_GAMEPAD_AXIS_RIGHT_Y,          3,      +0.25f,  +1.0f);
-    #undef MAP_BUTTON
-    #undef MAP_ANALOG
-}
 
 // - On Windows the process needs to be marked DPI-aware!! SDL2 doesn't do it by default. You can call ::SetProcessDPIAware() or call ImGui_ImplWin32_EnableDpiAwareness() from Win32 backend.
 // - Apple platforms use FramebufferScale so we always return 1.0f.
@@ -56253,6 +56314,7 @@ void ImGui_ImplGlfw_InstallEmscriptenCallbacks(GLFWwindow* window, const char* c
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_glut.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -56563,6 +56625,7 @@ void ImGui_ImplGLUT_MotionFunc(int x, int y)
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_null.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -56669,6 +56732,7 @@ IMGUI_IMPL_API void ImGui_ImplNullRender_RenderDrawData(ImDrawData* draw_data)
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_opengl2.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -57016,6 +57080,7 @@ void    ImGui_ImplOpenGL2_DestroyDeviceObjects()
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_opengl3.cpp] ===
+
 
 
 // dear imgui: Renderer Backend for modern OpenGL with shaders / programmatic pipeline
@@ -58056,6 +58121,7 @@ void    ImGui_ImplOpenGL3_DestroyDeviceObjects()
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: backends_imgui_impl_sdl2.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -58831,19 +58897,6 @@ static void ImGui_ImplSDL2_UpdateGamepadButton(ImGui_ImplSDL2_Data* bd, ImGuiIO&
     io.AddKeyEvent(key, merged_value);
 }
 
-static inline float Saturate(float v) { return v < 0.0f ? 0.0f : v  > 1.0f ? 1.0f : v; }
-static void ImGui_ImplSDL2_UpdateGamepadAnalog(ImGui_ImplSDL2_Data* bd, ImGuiIO& io, ImGuiKey key, SDL_GameControllerAxis axis_no, float v0, float v1)
-{
-    float merged_value = 0.0f;
-    for (SDL_GameController* gamepad : bd->Gamepads)
-    {
-        float vn = Saturate((float)(SDL_GameControllerGetAxis(gamepad, axis_no) - v0) / (float)(v1 - v0));
-        if (merged_value < vn)
-            merged_value = vn;
-    }
-    io.AddKeyAnalogEvent(key, merged_value > 0.1f, merged_value);
-}
-
 static void ImGui_ImplSDL2_UpdateGamepads()
 {
     ImGui_ImplSDL2_Data* bd = ImGui_ImplSDL2_GetBackendData();
@@ -58961,6 +59014,7 @@ void ImGui_ImplSDL2_NewFrame()
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_sdl3.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -59693,19 +59747,6 @@ static void ImGui_ImplSDL3_UpdateGamepadButton(ImGui_ImplSDL3_Data* bd, ImGuiIO&
     io.AddKeyEvent(key, merged_value);
 }
 
-static inline float Saturate(float v) { return v < 0.0f ? 0.0f : v  > 1.0f ? 1.0f : v; }
-static void ImGui_ImplSDL3_UpdateGamepadAnalog(ImGui_ImplSDL3_Data* bd, ImGuiIO& io, ImGuiKey key, SDL_GamepadAxis axis_no, float v0, float v1)
-{
-    float merged_value = 0.0f;
-    for (SDL_Gamepad* gamepad : bd->Gamepads)
-    {
-        float vn = Saturate((float)(SDL_GetGamepadAxis(gamepad, axis_no) - v0) / (float)(v1 - v0));
-        if (merged_value < vn)
-            merged_value = vn;
-    }
-    io.AddKeyAnalogEvent(key, merged_value > 0.1f, merged_value);
-}
-
 static void ImGui_ImplSDL3_UpdateGamepads()
 {
     ImGuiIO& io = ImGui::GetIO();
@@ -59827,6 +59868,7 @@ void ImGui_ImplSDL3_NewFrame()
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_sdlgpu3.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -60512,6 +60554,7 @@ void ImGui_ImplSDLGPU3_NewFrame()
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_sdlrenderer2.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -60814,6 +60857,7 @@ void ImGui_ImplSDLRenderer2_DestroyDeviceObjects()
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_sdlrenderer3.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -61132,6 +61176,7 @@ void ImGui_ImplSDLRenderer3_DestroyDeviceObjects()
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_vulkan.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -61558,10 +61603,6 @@ static void check_vk_result(VkResult err)
 }
 
 // Same as IM_MEMALIGN(). 'alignment' must be a power of two.
-static inline VkDeviceSize AlignBufferSize(VkDeviceSize size, VkDeviceSize alignment)
-{
-    return (size + alignment - 1) & ~(alignment - 1);
-}
 
 static void CreateOrResizeBuffer(VkBuffer& buffer, VkDeviceMemory& buffer_memory, VkDeviceSize& buffer_size, VkDeviceSize new_size, VkBufferUsageFlagBits usage)
 {
@@ -63028,6 +63069,7 @@ void ImGui_ImplVulkanH_DestroyFrameSemaphores(VkDevice device, ImGui_ImplVulkanH
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_wgpu.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -64114,6 +64156,7 @@ WGPUSurface ImGui_ImplWGPU_CreateWGPUSurfaceHelper(ImGui_ImplWGPU_CreateSurfaceI
 
 
 #endif // #if 0// === [SECTION: backends_imgui_impl_win32.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -65092,6 +65135,7 @@ void ImGui_ImplWin32_EnableAlphaCompositing(void* hwnd)
 
 
 #endif // #if 0// === [SECTION: examples_example_allegro5_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -65244,6 +65288,7 @@ int main(int, char**)
 
 
 #endif // #if 0// === [SECTION: examples_example_android_opengl3_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -65632,6 +65677,7 @@ static int GetAssetData(const char* filename, void** outData)
 
 
 #endif // #if 0// === [SECTION: examples_example_glfw_opengl2_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -65811,6 +65857,7 @@ int main(int, char**)
 
 
 #endif // #if 0// === [SECTION: examples_example_glfw_opengl3_main.cpp] ===
+
 
 
 // Dear ImGui: standalone example application for GLFW + OpenGL 3, using programmable pipeline
@@ -66022,6 +66069,7 @@ int main(int, char**)
 }
 
 // === [SECTION: examples_example_glfw_vulkan_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -66558,6 +66606,7 @@ int main(int, char**)
 
 
 #endif // #if 0// === [SECTION: examples_example_glfw_wgpu_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -67123,6 +67172,7 @@ WGPUSurface CreateWGPUSurface(const WGPUInstance& instance, GLFWwindow* window)
 
 
 #endif // #if 0// === [SECTION: examples_example_glut_opengl2_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -67287,6 +67337,7 @@ void MainLoopStep()
 
 
 #endif // #if 0// === [SECTION: examples_example_null_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -67332,6 +67383,7 @@ int main(int, char**)
 
 
 #endif // #if 0// === [SECTION: examples_example_sdl2_directx11_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -67596,6 +67648,7 @@ void CleanupRenderTarget()
 
 
 #endif // #if 0// === [SECTION: examples_example_sdl2_opengl2_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -67785,6 +67838,7 @@ int main(int, char**)
 
 
 #endif // #if 0// === [SECTION: examples_example_sdl2_opengl3_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -68022,6 +68076,7 @@ int main(int, char**)
 
 
 #endif // #if 0// === [SECTION: examples_example_sdl2_sdlrenderer2_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -68213,6 +68268,7 @@ int main(int, char**)
 
 
 #endif // #if 0// === [SECTION: examples_example_sdl2_vulkan_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -68765,6 +68821,7 @@ int main(int, char**)
 
 
 #endif // #if 0// === [SECTION: examples_example_sdl2_wgpu_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -69303,6 +69360,7 @@ WGPUSurface CreateWGPUSurface(const WGPUInstance& instance, SDL_Window* window)
 
 
 #endif // #if 0// === [SECTION: examples_example_sdl3_directx11_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -69563,6 +69621,7 @@ void CleanupRenderTarget()
 
 
 #endif // #if 0// === [SECTION: examples_example_sdl3_opengl3_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -69795,6 +69854,7 @@ int main(int, char**)
 
 
 #endif // #if 0// === [SECTION: examples_example_sdl3_sdlgpu3_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -70026,6 +70086,7 @@ int main(int, char**)
 
 
 #endif // #if 0// === [SECTION: examples_example_sdl3_sdlrenderer3_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -70221,6 +70282,7 @@ int main(int, char**)
 
 
 #endif // #if 0// === [SECTION: examples_example_sdl3_vulkan_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -70776,6 +70838,7 @@ int main(int, char**)
 
 
 #endif // #if 0// === [SECTION: examples_example_sdl3_wgpu_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -71324,6 +71387,7 @@ static WGPUSurface CreateWGPUSurface(const WGPUInstance& instance, SDL_Window* w
 
 
 #endif // #if 0// === [SECTION: examples_example_win32_directx10_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -71606,6 +71670,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
 #endif // #if 0// === [SECTION: examples_example_win32_directx11_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -71892,6 +71957,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
 #endif // #if 0// === [SECTION: examples_example_win32_directx12_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -72443,6 +72509,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
 #endif // #if 0// === [SECTION: examples_example_win32_directx9_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -72718,6 +72785,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
 #endif // #if 0// === [SECTION: examples_example_win32_opengl3_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -72970,6 +73038,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
 #endif // #if 0// === [SECTION: examples_example_win32_vulkan_main.cpp] ===
+
 #if 0 // Disabled by AI for backend filtering
 
 
@@ -73535,6 +73604,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 #endif // #if 0// === [SECTION: misc_cpp_imgui_stdlib.cpp] ===
 
 
+
 // dear imgui: wrappers for C++ standard library (STL) types (std::string, etc.)
 
 // This is also an example of how you may wrap your own similar types.
@@ -73635,6 +73705,7 @@ bool ImGui::InputTextWithHint(const char* label, const char* hint, std::string* 
 #endif // #ifndef IMGUI_DISABLE
 
 // === [SECTION: misc_fonts_binary_to_compressed_c.cpp] ===
+
 
 
 // dear imgui
@@ -74047,6 +74118,7 @@ stb_uint stb_compress(stb_uchar *out, stb_uchar *input, stb_uint length)
 }
 
 // === [SECTION: misc_freetype_imgui_freetype.cpp] ===
+
 
 
 // dear imgui: FreeType font builder (used as a replacement for the stb_truetype builder)
